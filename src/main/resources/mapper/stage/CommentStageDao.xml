@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.springapp.stage.talk.dao.CommentDao">
+    <resultMap id="BASE_RESULT" type="com.springapp.stage.talk.entity.Comment">
+        <id column="COMMENT_ID" jdbcType="INTEGER" property="id"/>
+        <result column="CONTENT" jdbcType="VARCHAR" property="content"/>
+        <result column="NOTE_ID" jdbcType="INTEGER" property="noteId"/>
+        <result column="CREATER_NAME" jdbcType="VARCHAR" property="createrName"/>
+        <result column="CREATER_ID" jdbcType="INTEGER" property="createrId"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="FLOOR" jdbcType="INTEGER" property="floor"/>
+    </resultMap>
+    <sql id="base">
+        COMMENT_ID,CONTENT,COMMENTS.NOTE_ID,COMMENTS.CREATER_NAME,COMMENTS.CREATER_ID,COMMENTS.CREATE_DATE,FLOOR
+    </sql>
+    <insert id="save">
+        INSERT INTO COMMENTS
+        <trim suffixOverrides="," suffix=")" prefix="(">
+            <if test="content != null and content !=''">
+                CONTENT,
+            </if>
+            <if test="noteId != null and noteId !=0">
+                NOTE_ID,
+            </if>
+            <if test="createrName != null and createrName !=''">
+                CREATER_NAME,
+            </if>
+            <if test="createrId != null and createrId !=0">
+                CREATER_ID,
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE,
+            </if>
+            <if test="floor != null and floor !=0">
+                FLOOR
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="content != null and content !=''">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="noteId != null and noteId !=0">
+                #{noteId,jdbcType=INTEGER},
+            </if>
+            <if test="createrName != null and createrName !=''">
+                #{createrName,jdbcType=VARCHAR},
+            </if>
+            <if test="createrId != null and createrId !=0">
+                #{createrId,jdbcType=INTEGER},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="floor != null and floor !=0">
+                #{floor,jdbcType=INTEGER}
+            </if>
+        </trim>
+    </insert>
+
+    <select id="find" resultMap="BASE_RESULT">
+        SELECT
+        <include refid="base"/>
+        FROM COMMENTS
+        WHERE NOTE_ID=#{noteId,jdbcType=INTEGER}
+        <if test="page!=null">
+            AND ROWNUM &lt; #{page.pageSize,jdbcType=INTEGER}+#{page.first,jdbcType=INTEGER}+1
+        </if>
+        <if test="page!=null">
+            MINUS
+            SELECT
+            <include refid="base"/>
+            FROM COMMENTS
+            WHERE NOTE_ID=#{noteId,jdbcType=INTEGER}
+            AND ROWNUM &lt; #{page.first,jdbcType=INTEGER}+1
+        </if>
+    </select>
+    <select id="finfCount" resultType="int">
+        SELECT
+        COUNT(1)
+        FROM COMMENTS
+        WHERE NOTE_ID=#{noteId,jdbcType=INTEGER}
+    </select>
+</mapper>

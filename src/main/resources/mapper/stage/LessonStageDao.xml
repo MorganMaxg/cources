@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.springapp.stage.security.dao.LessonStageDao">
+    <resultMap id="BASE" type="com.springapp.stage.security.entity.Lesson">
+        <id column="ID" jdbcType="INTEGER" property="id"/>
+        <result column="LESSON_NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="LESSON_SCORE" jdbcType="INTEGER" property="score"/>
+    </resultMap>
+
+    <select id="findGrade" resultMap="BASE">
+        SELECT ID,LESSON_NAME,LESSON_SCORE
+        FROM LESSON_STUDENTS
+        LEFT JOIN LESSONS ON LESSONS.LESSON_ID=LESSON_STUDENTS.LESSON_ID
+        WHERE STUDENT_ID=#{studentId,jdbcType=INTEGER}
+    </select>
+</mapper>

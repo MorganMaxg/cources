@@ -1,0 +1,14 @@
+
+public class A
+{
+	public static void main(String args[])
+	{
+		int x=3;
+		A.get(x);
+		System.out.println(x);
+	}
+	public static void get(IntHolder x)
+	{
+		x.value=x.value*3;
+	}
+}

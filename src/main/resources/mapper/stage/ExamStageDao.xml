@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.springapp.stage.exam.dao.ExamDao">
+    <resultMap id="BASE_RESULT" type="com.springapp.stage.exam.entity.Exam">
+        <id column="EXAM_ID" jdbcType="INTEGER" property="examId"/>
+        <result column="EXAM_TITLE" jdbcType="VARCHAR" property="examTitle"/>
+        <result column="LESSON_NAME" jdbcType="VARCHAR" property="lessonName"/>
+        <result column="DEADLINE" jdbcType="TIMESTAMP" property="deadline"/>
+        <result column="STARTTIME" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="SCORE" jdbcType="INTEGER" property="score"/>
+    </resultMap>
+    <sql id="BASE">
+        EXAMS.EXAM_ID,EXAM_TITLE,EXAMS.LESSON_ID,DEADLINE,STARTTIME
+    </sql>
+    <select id="find" parameterType="int" resultMap="BASE_RESULT">
+        SELECT
+        <include refid="BASE"/>,LESSON_NAME,SCORE
+        FROM EXAMS
+        LEFT JOIN LESSONS ON LESSONS.LESSON_ID=EXAMS.LESSON_ID
+        LEFT JOIN EXAMS_STUDENTS ON EXAMS.EXAM_ID=EXAMS_STUDENTS.EXAM_ID
+        WHERE STUDENT_ID=#{studentId,jdbcType=INTEGER}
+        AND FINISH=0
+    </select>
+    <select id="findById" parameterType="int" resultMap="BASE_RESULT">
+        SELECT
+        <include refid="BASE"/>,LESSON_NAME
+        FROM EXAMS
+        LEFT JOIN LESSONS ON LESSONS.LESSON_ID=EXAMS.LESSON_ID
+        WHERE EXAMS.EXAM_ID=#{examId,jdbcType=INTEGER}
+    </select>
+
+    <update id="updateES">
+        UPDATE EXAMS_STUDENTS
+        SET FINISH=#{finish,jdbcType=INTEGER}
+        WHERE
+        EXAM_ID=#{examId,jdbcType=INTEGER}
+        AND STUDENT_ID=#{studentId,jdbcType=INTEGER}
+    </update>
+</mapper>

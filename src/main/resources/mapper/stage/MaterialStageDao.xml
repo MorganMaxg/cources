@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.springapp.stage.download.dao.MaterialDao">
+    <resultMap id="materialMap" type="com.springapp.stage.download.entity.Material">
+        <id column="MATERIAL_ID" jdbcType="INTEGER" property="materialId"/>
+        <result column="MATERIAL_NAME" jdbcType="VARCHAR" property="materialName"/>
+        <result column="URI" jdbcType="VARCHAR" property="uri"/>
+    </resultMap>
+    <select id="findMaterials" resultMap="materialMap">
+        SELECT MATERIAL_ID,MATERIAL_NAME,URI
+        FROM MATERIALS
+        <where>
+            <if test="materialId !=null and materialId !=0 ">
+                MATERIAL_ID = #{materialId,jdbcType=INTEGER}
+            </if>
+            <if test="materialName != null and materialName != ''">
+                AND MATERIAL_NAME LIKE '%'||#{materialName,jdbcType=VARCHAR}||'%'
+            </if>
+            <if test="uri != null and uri != ''">
+                AND URI = #{uri,jdbcType=VARCHAR}
+            </if>
+            <if test="page != null">
+                AND ROWNUM &lt; #{page.pageSize,jdbcType=INTEGER}+#{page.first,jdbcType=INTEGER}+1
+            </if>
+        </where>
+        <if test="page!= null">
+            MINUS
+            SELECT MATERIAL_ID,MATERIAL_NAME,URI
+            FROM MATERIALS
+            <where>
+                <if test="materialId !=null and materialId !=0 ">
+                    MATERIAL_ID = #{materialId,jdbcType=INTEGER}
+                </if>
+                <if test="materialName != null and materialName != ''">
+                    AND MATERIAL_NAME LIKE '%'||#{materialName,jdbcType=VARCHAR}||'%'
+                </if>
+                <if test="uri != null and uri != ''">
+                    AND URI = #{uri,jdbcType=VARCHAR}
+                </if>
+                <if test="page != null">
+                    AND ROWNUM &lt; #{page.first,jdbcType=INTEGER}+1
+                </if>
+            </where>
+        </if>
+    </select>
+    <select id="countMaterials" resultType="int">
+        SELECT COUNT(MATERIAL_ID)
+        FROM MATERIALS
+        <where>
+            <if test="materialId !=null and materialId !=0 ">
+                MATERIAL_ID = #{materialId,jdbcType=INTEGER}
+            </if>
+            <if test="materialName != null and materialName != ''">
+                AND MATERIAL_NAME LIKE '%'||#{materialName,jdbcType=VARCHAR}||'%'
+            </if>
+            <if test="uri != null and uri != ''">
+                AND URI = #{uri,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+</mapper>

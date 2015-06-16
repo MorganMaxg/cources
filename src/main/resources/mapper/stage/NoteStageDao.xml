@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.springapp.stage.talk.dao.NoteDao">
+    <resultMap id="NOTE_RESULT" type="com.springapp.stage.talk.entity.Note">
+        <id column="NOTE_ID" jdbcType="INTEGER" property="noteId"/>
+        <result column="TITLE" jdbcType="VARCHAR" property="title"/>
+        <result column="CONTENT" jdbcType="VARCHAR" property="content"/>
+        <result column="CREATER_NAME" jdbcType="VARCHAR" property="createrName"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="CREATER_ID" jdbcType="INTEGER" property="createrId"/>
+        <result column="PARENT_ID" jdbcType="INTEGER" property="parentId"/>
+        <result column="CURRENT_FLOOR" jdbcType="INTEGER" property="currentFloor"/>
+        <result column="STATUS" jdbcType="INTEGER" property="status"/>
+        <result column="COUNT" jdbcType="INTEGER" property="count"/>
+    </resultMap>
+    <sql id="BASE">
+        NOTE_ID,TITLE,CONTENT,CREATER_NAME,CREATE_DATE,CREATER_ID,PARENT_ID,CURRENT_FLOOR,STATUS,COUNT
+    </sql>
+    <select id="findCount" resultType="int">
+        SELECT
+        COUNT(1)
+        FROM NOTES
+        <where>
+            <if test="createrId!=null and createrId !=0">
+                CREATER_ID=#{createrId,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+    <select id="find" resultMap="NOTE_RESULT">
+        SELECT
+        ROWNUM,
+        <include refid="BASE"/>
+        FROM
+        ( SELECT
+        <include refid="BASE"/>
+        FROM NOTES WHERE STATUS !=-1 ORDER BY CREATE_DATE DESC)
+        <where>
+            <if test="createrId!=null and createrId !=0">
+                CREATER_ID=#{createrId,jdbcType=INTEGER}
+            </if>
+            <if test="page!=null">
+                AND ROWNUM &lt; #{page.pageSize,jdbcType=INTEGER}+#{page.first,jdbcType=INTEGER}+1
+            </if>
+        </where>
+        <if test="page!=null">
+            MINUS
+            SELECT ROWNUM,
+            <include refid="BASE"/>
+            FROM ( SELECT
+            <include refid="BASE"/>
+            FROM NOTES WHERE STATUS != -1 ORDER BY CREATE_DATE DESC)
+            <where>
+                <if test="createrId!=null and createrId !=0">
+                    CREATER_ID=#{createrId,jdbcType=INTEGER}
+                </if>
+                <if test="page!=null">
+                    AND ROWNUM &lt; #{page.first,jdbcType=INTEGER}+1
+                </if>
+            </where>
+        </if>
+    </select>
+    <select id="findById" resultMap="NOTE_RESULT">
+        SELECT
+        <include refid="BASE"/>
+        FROM NOTES
+        WHERE NOTE_ID=#{id,jdbcType=INTEGER}
+        AND STATUS != -1
+    </select>
+    <insert id="save">
+        INSERT INTO NOTES
+        <trim suffix=")" prefix="(" suffixOverrides=",">
+            <if test="noteId !=null and noteId !=0">
+                NOTE_ID,
+            </if>
+            <if test="title != null and title!=''">
+                TITLE,
+            </if>
+            <if test="content != null and content !=''">
+                CONTENT,
+            </if>
+            <if test="createrName != null and createrName !=''">
+                CREATER_NAME,
+            </if>
+            <if test="createrId != null and createrId !=0">
+                CREATER_ID,
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE,
+            </if>
+            <if test="parentId != null and parentId !=0">
+                PARENT_ID,
+            </if>
+        </trim>
+        <trim suffix=")" prefix="VALUES(" suffixOverrides=",">
+            <if test="noteId !=null and noteId !=0">
+                #{noteId,jdbcType=INTEGER},
+            </if>
+            <if test="title != null and title!=''">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null and content !=''">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="createrName != null and createrName !=''">
+                #{createrName,jdbcType=VARCHAR},
+            </if>
+            <if test="createrId != null and createrId !=0">
+                #{createrId,jdbcType=INTEGER,},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="parentId != null and parentId !=0">
+                #{parentId,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="update">
+        UPDATE NOTES
+        <set>
+            <if test="title != null and title !=''">
+                TITLE=#{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content!= null and content !=''">
+                CONTENT =#{content,jdbcType=VARCHAR},
+            </if>
+            <if test="currentFloor != null and currentFloor !=0">
+                CURRENT_FLOOR=#{currentFloor,jdbcType=INTEGER}
+            </if>
+        </set>
+        WHERE NOTE_ID=#{noteId,jdbcType=INTEGER}
+    </update>
+    <update id="deleteById">
+        UPDATE NOTES
+        SET STATUS=-1
+        WHERE NOTE_ID=#{id,jdbcType=INTEGER}
+    </update>
+</mapper>

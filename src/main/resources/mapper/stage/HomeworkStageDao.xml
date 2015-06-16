@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.springapp.stage.homework.dao.HomeworkDao">
+    <resultMap id="HOMEWORK_RESULT" type="com.springapp.stage.homework.entity.Homework">
+        <result column="HOMEWORK_ID" jdbcType="INTEGER" property="homeworkId"/>
+        <result column="HOMEWORK_NAME" jdbcType="VARCHAR" property="homeworkName"/>
+        <result column="CONTENT" jdbcType="VARCHAR" property="content"/>
+        <result column="URI" jdbcType="VARCHAR" property="uri"/>
+        <result column="DEADLINE" jdbcType="DATE" property="deadline"/>
+        <result column="FILENAME" jdbcType="VARCHAR" property="fileName"/>
+        <result column="LESSON_NAME" jdbcType="VARCHAR" property="lessonName"/>
+        <result column="FINISH" jdbcType="INTEGER" property="finish"/>
+        <result column="SCORE" jdbcType="INTEGER" property="score"/>
+    </resultMap>
+    <select id="find" resultMap="HOMEWORK_RESULT">
+        SELECT
+        HOMEWORK_STUDENTS.HOMEWORK_ID,HOMEWORK_NAME,HOMEWORK.CONTENT,
+        HOMEWORK.URI,DEADLINE,HOMEWORK.FILENAME,
+        LESSON_NAME,HOMEWORK_STUDENTS.FINISH,HOMEWORK_STUDENTS.SCORE
+        FROM HOMEWORK_STUDENTS
+        LEFT JOIN HOMEWORK
+        ON HOMEWORK.HOMEWORK_ID=HOMEWORK_STUDENTS.ID
+        LEFT JOIN LESSONS
+        ON HOMEWORK.LESSON_ID=LESSONS.LESSON_ID
+        WHERE STUDENT_ID=#{studentId,jdbcType=INTEGER}
+        <if test="finish != null">
+            AND HOMEWORK_STUDENTS.FINISH=#{finish,jdbcType=INTEGER}
+        </if>
+        <if test="page != null">
+            AND ROWNUM &lt; #{page.pageSize,jdbcType=INTEGER}+#{page.first,jdbcType=INTEGER}+1
+            MINUS
+            SELECT
+            HOMEWORK_STUDENTS.HOMEWORK_ID,HOMEWORK_NAME,HOMEWORK.CONTENT,
+            HOMEWORK.URI,DEADLINE,HOMEWORK.FILENAME,
+            LESSON_NAME,HOMEWORK_STUDENTS.FINISH,HOMEWORK_STUDENTS.SCORE
+            FROM HOMEWORK_STUDENTS
+            LEFT JOIN HOMEWORK
+            ON HOMEWORK.HOMEWORK_ID=HOMEWORK_STUDENTS.ID
+            LEFT JOIN LESSONS
+            ON HOMEWORK.LESSON_ID=LESSONS.LESSON_ID
+            WHERE STUDENT_ID=#{studentId,jdbcType=INTEGER}
+            <if test="finish != null">
+                AND HOMEWORK_STUDENTS.FINISH=#{finish,jdbcType=INTEGER}
+            </if>
+            AND ROWNUM &lt; #{page.first,jdbcType=INTEGER}+1
+        </if>
+    </select>
+
+    <select id="findById" parameterType="int" resultMap="HOMEWORK_RESULT">
+        SELECT
+        LESSONS.LESSON_NAME,HOMEWORK.HOMEWORK_ID,HOMEWORK_NAME,HOMEWORK.CONTENT,HOMEWORK.URI,HOMEWORK.DEADLINE,HOMEWORK.FILENAME
+        FROM HOMEWORK
+        LEFT JOIN LESSONS ON LESSONS.LESSON_ID=HOMEWORK.LESSON_ID
+        WHERE HOMEWORK_ID=#{id}
+    </select>
+
+    <update id="updateCount">
+        UPDATE HOMEWORK_LESSONS
+        SET COUNT=COUNT+1
+        WHERE
+        HOMEWORK_ID=#{homeworkId,jdbcType=INTEGER}
+        AND
+        LESSON_ID=#{lessonId,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateHomeworkStudent">
+        UPDATE HOMEWORK_STUDENTS
+        SET URI=#{uri,jdbcType=VARCHAR},
+        FILENAME=#{fileName,jdbcType=VARCHAR},
+        FINISH=#{finish,jdbcType=INTEGER}
+        WHERE
+        HOMEWORK_ID = #{homeworkId,jdbcType=INTEGER}
+        AND
+        STUDENT_ID = #{studentId,jdbcType=INTEGER}
+    </update>
+
+    <select id="findStudentHomework" resultMap="HOMEWORK_RESULT">
+        SELECT SCORE,URI,FILENAME,FINISH
+        FROM HOMEWORK_STUDENTS
+        WHERE HOMEWORK_ID=#{homeworkId,jdbcType=INTEGER}
+        AND STUDENT_ID = #{studentId,jdbcType=INTEGER}
+    </select>
+</mapper>

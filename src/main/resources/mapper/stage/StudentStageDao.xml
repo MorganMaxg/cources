@@ -1,0 +1,28 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.springapp.stage.security.dao.StudentDao">
+    <resultMap id="BASE_RESULT" type="com.springapp.stage.security.entity.Student">
+        <id column="ID" jdbcType="INTEGER" property="id"/>
+        <result column="STUDENT_NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="CLASS_NAME" jdbcType="VARCHAR" property="className"/>
+        <result column="LESSON_NAME" jdbcType="VARCHAR" property="lessonName"/>
+        <result column="LESSON_ID" jdbcType="INTEGER" property="lessonId"/>
+        <result column="STUDENT_ID" jdbcType="VARCHAR" property="studentId"/>
+        <result column="PASSWORD" jdbcType="VARCHAR" property="password"/>
+        <result column="TIME" jdbcType="INTEGER" property="time"/>
+    </resultMap>
+    <select id="findByStudentId" resultMap="BASE_RESULT">
+        SELECT STUDENTS.ID,STUDENT_NAME,CLASS_NAME,LESSON_NAME,STUDENTS.STUDENT_ID,LESSONS.LESSON_ID,PASSWORD,TIME
+        FROM STUDENTS
+        LEFT JOIN CLASSES ON STUDENTS.CLASS_ID=CLASSES.CLASS_ID
+        LEFT JOIN LESSON_STUDENTS ON STUDENTS.ID=LESSON_STUDENTS.STUDENT_ID
+        LEFT JOIN LESSONS ON LESSON_STUDENTS.LESSON_ID=LESSONS.LESSON_ID
+        WHERE STUDENTS.STUDENT_ID=#{studentId,jdbcType=VARCHAR}
+    </select>
+    <update id="updateTime">
+        UPDATE STUDENTS
+        SET TIME=TIME+1
+        WHERE STUDENT_ID=#{studentId,jdbcType=VARCHAR}
+    </update>
+</mapper>
