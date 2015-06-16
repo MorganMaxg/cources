@@ -1,9 +1,9 @@
 package com.springapp.stage.grade.service;
 
 import ch.qos.logback.classic.Logger;
-import com.springapp.stage.exam.dao.ExamDao;
+import com.springapp.stage.exam.dao.ExamSDao;
 import com.springapp.stage.exam.entity.Exam;
-import com.springapp.stage.homework.dao.HomeworkDao;
+import com.springapp.stage.homework.dao.HomeworkSDao;
 import com.springapp.stage.homework.entity.Homework;
 import com.springapp.stage.security.dao.LessonStageDao;
 import com.springapp.stage.security.entity.Lesson;
@@ -27,10 +27,10 @@ public class GradeManager {
     private LessonStageDao lessonStageDao;
 
     @Autowired
-    private ExamDao examDao;
+    private ExamSDao examSDao;
 
     @Autowired
-    private HomeworkDao homeworkDao;
+    private HomeworkSDao homeworkSDao;
 
     /**
      * 查询总成绩
@@ -48,7 +48,7 @@ public class GradeManager {
      */
     @Transactional(readOnly = true)
     public List<Exam> findExamGrade(Integer studnetId) {
-        return examDao.find(studnetId);
+        return examSDao.find(studnetId);
     }
 
     /**
@@ -56,7 +56,7 @@ public class GradeManager {
      */
     @Transactional(readOnly = true)
     public List<Homework> findHomeworkGrade(Integer studentId, Page<Homework> page) {
-        return homeworkDao.find(studentId, null, page);
+        return homeworkSDao.find(studentId, null, page);
     }
 
 }

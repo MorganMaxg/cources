@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Param;
 /**
  * Created by ASUS on 2015/4/9.
  */
-public interface StudentDao {
+public interface StudentSDao {
     /**
      *
      */

@@ -29,6 +29,10 @@
                 <div class="panel-body">
                     <table class="table">
                         <tr>
+                            <th>作业标题</th>
+                            <td><input type="text" name="homeworkName"></td>
+                        </tr>
+                        <tr>
                             <th>作业内容</th>
                             <td><input type="text" name="content"></td>
                         </tr>

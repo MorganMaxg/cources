@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by ASUS on 2015/4/27.
  */
-public interface MaterialDao {
+public interface MaterialSDao {
     public List<Material> findMaterials(
             @Param("materialId") Integer materialId,
             @Param("materialName") String materialName,

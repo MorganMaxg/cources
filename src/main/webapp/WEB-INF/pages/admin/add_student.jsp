@@ -48,7 +48,7 @@
                         List<Lesson> lessons = (List<Lesson>) request.getAttribute("lessons");
                         for (Lesson lesson : lessons) {
                     %>
-                    <input type="radio" name="lessonRadio" value="<%=lesson.getLessonID()%>"><%=lesson.getLessonName()%>
+                    <input type="radio" name="lessonRadio" required="true" value="<%=lesson.getLessonID()%>"><%=lesson.getLessonName()%>
                     <br>
                     <%
                         }

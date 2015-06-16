@@ -12,6 +12,7 @@
         <result column="FILENAME" property="teacherFileName" jdbcType="VARCHAR"/>
         <result column="DEADLINE" property="deadline" jdbcType="DATE"/>
         <result column="SCORE" property="score" jdbcType="INTEGER"/>
+        <result column="HOMEWORK_NAME" jdbcType="VARCHAR" property="homeworkName"/>
     </resultMap>
 
     <select id="findLessonIDByTeacherID" resultType="int">
@@ -59,8 +60,8 @@
 
 
     <insert id="addHomeworkAndAddStudents">
-        INSERT INTO HOMEWORK_STUDENTS (HOMEWORK_LESSON_ID,STUDENT_ID)
-        SELECT HOMEWORK_LESSON_ID,STUDENT_ID FROM LESSONS_STUDENTS LEFT JOIN HOMEWORK_LESSONS ON
+        INSERT INTO HOMEWORK_STUDENTS (HOMEWORK_LESSON_ID,STUDENT_ID,HOMEWORK_ID)
+        SELECT HOMEWORK_LESSON_ID,STUDENT_ID,#{homeworkId} FROM LESSONS_STUDENTS LEFT JOIN HOMEWORK_LESSONS ON
         LESSONS_STUDENTS.LESSON_ID=HOMEWORK_LESSONS.LESSON_ID
         WHERE HOMEWORK_LESSONS.HOMEWORK_LESSON_ID=#{homeworkLessonID,jdbcType=INTEGER} AND
         LESSONS_STUDENTS.LESSON_ID=#{lessonID,jdbcType=INTEGER}
@@ -68,9 +69,13 @@
 
 
     <insert id="addHomework">
-        insert into HOMEWORK(HOMEWORK_ID,CONTENT,URI,DEADLINE,FILENAME)
+        insert into HOMEWORK(HOMEWORK_ID,HOMEWORK_NAME,CONTENT,URI,DEADLINE,FILENAME)
         VALUES
-        (HOMEWORK_SEQUENCE.NEXTVAL,#{homework.content,jdbcType=VARCHAR},#{homework.teacherUri,jdbcType=VARCHAR},#{homework.deadline,jdbcType=DATE},#{homework.teacherFileName,jdbcType=VARCHAR})
+        (HOMEWORK_SEQUENCE.NEXTVAL,#{homework.content,jdbcType=VARCHAR},
+        #{homework.homeworkName},
+        #{homework.teacherUri,jdbcType=VARCHAR},
+        #{homework.deadline,jdbcType=DATE},
+        #{homework.teacherFileName,jdbcType=VARCHAR})
     </insert>
 
     <insert id="addHomeworkLesson">

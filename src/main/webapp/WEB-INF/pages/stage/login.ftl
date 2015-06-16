@@ -29,7 +29,7 @@
                 </div>
             </div>
             <div class="form-group" style="padding-top: 60px;padding-bottom: 30px">
-                <a class="btn btn-link" style="margin-left: 100px">后台登录</a>
+                <a href="/admin/login" class="btn btn-link" style="margin-left: 100px">后台登录</a>
                 <input type="submit" value="登录" class="btn btn-primary">
             </div>
         </form>

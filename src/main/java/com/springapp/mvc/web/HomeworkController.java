@@ -143,7 +143,7 @@ public class HomeworkController {
                 //绑定HOMEWORK和LESSON的属性
                 int homeworkLessonID = homeworkService.addHomeworkAndLessonAndReturnHomeworkLessonID(homeworkID, lessonID);
                 //同时绑定HOMEWORK和STUDENT的属性
-                homeworkService.addHomeworkAndAddStudents(homeworkLessonID, lessonID);
+                homeworkService.addHomeworkAndAddStudents(homeworkLessonID,homeworkID, lessonID);
             }
             FileUtils.upload("" + uri, part, files, request);
         } catch (Exception e) {

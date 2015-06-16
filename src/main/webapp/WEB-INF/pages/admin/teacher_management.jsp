@@ -11,11 +11,6 @@
 <html>
 <head>
     <title>教师管理</title>
-    <script>
-        function deleteAlert() {
-            alert('你确定要删除么?');
-        }
-    </script>
     <style type="text/css">
         #panel {
             width: 1350px;

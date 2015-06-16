@@ -27,11 +27,11 @@
         </if>
     </select>
 
-    <select id="findAllHomeworkByStudentID" resultMap="HomeworkStudentsBaseResultMap">
-        select HOMEWORK_LESSONS.HOMEWORK_ID from HOMEWORK_STUDENTS
-        left jOIn HOMEWORK_LESSONS ON HOMEWORK_STUDENTS.HOMEWORK_LESSON_ID=HOMEWORK_LESSONS.HOMEWORK_LESSON_ID
-        WHERE HOMEWORK_STUDENTS.STUDENT_ID=#{homeworkID,jdbcType=INTEGER}
-    </select>
+    <!--<select id="findAllHomeworkByStudentID" resultMap="HomeworkStudentsBaseResultMap">-->
+        <!--select HOMEWORK_LESSONS.HOMEWORK_ID from HOMEWORK_STUDENTS-->
+        <!--left jOIn HOMEWORK_LESSONS ON HOMEWORK_STUDENTS.HOMEWORK_LESSON_ID=HOMEWORK_LESSONS.HOMEWORK_LESSON_ID-->
+        <!--WHERE HOMEWORK_STUDENTS.STUDENT_ID=#{homeworkID,jdbcType=INTEGER}-->
+    <!--</select>-->
 
     <select id="findHomeworkStudentsByTeacherFileName" resultMap="HomeworkStudentsBaseResultMap">
         select * from HOMEWORK_STUDENTS natural join HOMEWORK natural join STUDENTS

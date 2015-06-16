@@ -25,9 +25,10 @@
         <table class='table table-condensed table-hover table-striped table-borderless table-fixed'>
             <thead>
             <tr>
-                <th>作业题目</th>
+                <th>作业标题</th>
                 <th>作业内容</th>
                 <th>截止时间</th>
+                <th>附件</th>
                 <th>操作</th>
             </tr>
             </thead>
@@ -38,11 +39,13 @@
             %>
             <tr>
                 <th>
-                    <a href="/admin/homework/download?uri=<%=homework.getTeacherUri()%>&fileName=<%=homework.getTeacherFileName()%>"><%
-                        out.print(homework.getTeacherFileName().substring(0, homework.getTeacherFileName().indexOf(".")));%></a>
-                </th>
+                    <%=homework.getHomeworkName()%>
+                     </th>
                 <th><%out.print(homework.getContent());%></th>
                 <th><%=DateFormatUtils.format(homework.getDeadline(), "yyyy-MM-dd HH:MM:SS")%>
+                </th>
+                <th><a href="/admin/homework/download?uri=<%=homework.getTeacherUri()%>&fileName=<%=homework.getTeacherFileName()%>"><%
+                    out.print(homework.getTeacherFileName().substring(0, homework.getTeacherFileName().indexOf(".")));%></a>
                 </th>
                 <th>
                     <a href="/admin/homework/download?uri=<%=homework.getTeacherUri()%>&fileName=<%=homework.getTeacherFileName()%>"

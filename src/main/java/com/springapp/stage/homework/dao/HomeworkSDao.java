@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by ASUS on 2015/5/7.
  */
-public interface HomeworkDao {
+public interface HomeworkSDao {
     /**
      * @param studentId
      * @param page

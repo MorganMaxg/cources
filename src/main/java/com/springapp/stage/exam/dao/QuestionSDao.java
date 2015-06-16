@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by ASUS on 2015/5/30.
  */
-public interface QuestionDao {
+public interface QuestionSDao {
 
     /**
      *

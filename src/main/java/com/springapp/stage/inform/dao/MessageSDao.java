@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by ASUS on 2015/4/28.
  */
-public interface MessageDao {
+public interface MessageSDao {
     public List<Message> findMessages(@Param("page") Page page);
 
     public Integer countMessages();

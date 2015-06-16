@@ -17,6 +17,15 @@ public class Homework {
     private int count;
     private int score;
     private String uri;
+    private String homeworkName;
+
+    public String getHomeworkName() {
+        return homeworkName;
+    }
+
+    public void setHomeworkName(String homeworkName) {
+        this.homeworkName = homeworkName;
+    }
 
     public String getUri() {
         return uri;

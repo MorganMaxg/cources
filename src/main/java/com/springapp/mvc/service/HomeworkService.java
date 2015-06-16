@@ -49,8 +49,8 @@ public class HomeworkService {
     }
 
     @Transactional
-    public void addHomeworkAndAddStudents(int homeworkID, int lessonID) {
-        homeworkDao.addHomeworkAndAddStudents(homeworkID, lessonID);
+    public void addHomeworkAndAddStudents(int homeworkID,int homeworkId,int lessonID) {
+        homeworkDao.addHomeworkAndAddStudents(homeworkID,homeworkId, lessonID);
     }
 
     @Transactional

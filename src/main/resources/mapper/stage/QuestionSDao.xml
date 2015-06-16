@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.springapp.stage.exam.dao.QuestionDao">
+<mapper namespace="com.springapp.stage.exam.dao.QuestionSDao">
     <resultMap id="BASE_RESULT" type="com.springapp.stage.exam.entity.Question">
         <id column="QUESTION_ID" jdbcType="INTEGER" property="questionId"/>
         <result column="QUESTION_TYPE" jdbcType="VARCHAR" property="questionType"/>

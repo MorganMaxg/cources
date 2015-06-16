@@ -29,7 +29,9 @@ public interface HomeworkDao {
 
     public List<Homework> findAllHomeworkByLessonID(@Param("lessonID") int lessonID);
 
-    public void addHomeworkAndAddStudents(@Param("homeworkLessonID") int homeworkLessonID, @Param("lessonID") int lessonID);//添加学生作业的同时绑定作业和学生
+    public void addHomeworkAndAddStudents(@Param("homeworkLessonID") int homeworkLessonID,
+                                          @Param("homeworkId") int homeworkId,
+                                          @Param("lessonID") int lessonID);//添加学生作业的同时绑定作业和学生
 
     public List<Homework> findLessonsByHomeworkID(@Param("homeworkID") int homeworkID);
 

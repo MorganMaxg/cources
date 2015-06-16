@@ -1,8 +1,8 @@
 package com.springapp.stage.exam.service;
 
 import ch.qos.logback.classic.Logger;
-import com.springapp.stage.exam.dao.ExamDao;
-import com.springapp.stage.exam.dao.QuestionDao;
+import com.springapp.stage.exam.dao.ExamSDao;
+import com.springapp.stage.exam.dao.QuestionSDao;
 import com.springapp.stage.exam.entity.Exam;
 import com.springapp.stage.exam.entity.Question;
 import com.springapp.stage.utils.Page;
@@ -23,45 +23,45 @@ public class ExamManager {
 
     private static Logger logger = (Logger) LoggerFactory.getLogger(ExamManager.class);
     @Autowired
-    private ExamDao examDao;
+    private ExamSDao examSDao;
 
     @Autowired
-    private QuestionDao questionDao;
+    private QuestionSDao questionSDao;
 
     @Transactional(readOnly = true)
     public List<Exam> find(Integer studentId) {
-        return examDao.find(studentId);
+        return examSDao.find(studentId);
     }
 
     @Transactional(readOnly = true)
     public Exam findById(Integer examId) {
-        return examDao.findById(examId);
+        return examSDao.findById(examId);
     }
 
     @Transactional(readOnly = true)
     public List<Question> findQuestions(Integer examId, Integer studentId, Page<Question> page) {
-        return questionDao.find(examId, studentId, page);
+        return questionSDao.find(examId, studentId, page);
     }
 
     @Transactional(readOnly = true)
     public Integer findCountQuestionsInExam(Integer examId) {
-        return questionDao.findCountInExam(examId);
+        return questionSDao.findCountInExam(examId);
     }
 
     @Transactional
     public void saveStudentAnswer(Integer examId, Integer studentId, Integer questionId, String studentAnswer) {
-        Question question = questionDao.findById(questionId);
+        Question question = questionSDao.findById(questionId);
         Integer score = 0;
         if (question != null) {
             if (StringUtils.equals(question.getAnswer(), studentAnswer.trim())) {
                 score = 1;
             }
-            questionDao.updateESQ(examId, studentId, questionId, studentAnswer.trim(), score);
+            questionSDao.updateESQ(examId, studentId, questionId, studentAnswer.trim(), score);
         }
     }
 
     @Transactional
     public void submitExam(Integer examId, Integer studentId) {
-        examDao.updateES(examId, studentId, 1);
+        examSDao.updateES(examId, studentId, 1);
     }
 }

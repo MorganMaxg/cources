@@ -1,7 +1,7 @@
 package com.springapp.stage.inform.service;
 
 import ch.qos.logback.classic.Logger;
-import com.springapp.stage.inform.dao.MessageDao;
+import com.springapp.stage.inform.dao.MessageSDao;
 import com.springapp.stage.inform.entity.Message;
 import com.springapp.stage.utils.Page;
 import org.slf4j.LoggerFactory;
@@ -19,21 +19,21 @@ import java.util.List;
 public class MessageManager {
     private static Logger logger = (Logger) LoggerFactory.getLogger(MessageManager.class);
     @Autowired
-    private MessageDao messageDao;
+    private MessageSDao messageSDao;
 
     @Transactional(readOnly = true)
     public List<Message> findMessages(Page page) throws Exception {
-        return messageDao.findMessages(page);
+        return messageSDao.findMessages(page);
     }
 
     @Transactional(readOnly = true)
     public Integer countMessages() throws Exception {
-        return messageDao.countMessages();
+        return messageSDao.countMessages();
     }
 
     @Transactional(readOnly = true)
     public Message findMessageById(Integer messageId) {
-        return messageDao.findMessageById(messageId);
+        return messageSDao.findMessageById(messageId);
     }
 
 }

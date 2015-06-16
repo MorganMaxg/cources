@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.springapp.stage.homework.dao.HomeworkDao">
+<mapper namespace="com.springapp.stage.homework.dao.HomeworkSDao">
     <resultMap id="HOMEWORK_RESULT" type="com.springapp.stage.homework.entity.Homework">
         <result column="HOMEWORK_ID" jdbcType="INTEGER" property="homeworkId"/>
         <result column="HOMEWORK_NAME" jdbcType="VARCHAR" property="homeworkName"/>
@@ -16,14 +16,16 @@
     </resultMap>
     <select id="find" resultMap="HOMEWORK_RESULT">
         SELECT
-        HOMEWORK_STUDENTS.HOMEWORK_ID,HOMEWORK_NAME,HOMEWORK.CONTENT,
+        HOMEWORK_STUDENTS.HOMEWORK_ID,HOMEWORK.HOMEWORK_NAME,HOMEWORK.CONTENT,
         HOMEWORK.URI,DEADLINE,HOMEWORK.FILENAME,
         LESSON_NAME,HOMEWORK_STUDENTS.FINISH,HOMEWORK_STUDENTS.SCORE
         FROM HOMEWORK_STUDENTS
         LEFT JOIN HOMEWORK
         ON HOMEWORK.HOMEWORK_ID=HOMEWORK_STUDENTS.ID
+        LEFT JOIN HOMEWORK_LESSONS
+        ON HOMEWORK.HOMEWORK_ID=HOMEWORK_LESSONS.HOMEWORK_ID
         LEFT JOIN LESSONS
-        ON HOMEWORK.LESSON_ID=LESSONS.LESSON_ID
+        ON HOMEWORK_LESSONS.LESSON_ID=LESSONS.LESSON_ID
         WHERE STUDENT_ID=#{studentId,jdbcType=INTEGER}
         <if test="finish != null">
             AND HOMEWORK_STUDENTS.FINISH=#{finish,jdbcType=INTEGER}
@@ -32,14 +34,16 @@
             AND ROWNUM &lt; #{page.pageSize,jdbcType=INTEGER}+#{page.first,jdbcType=INTEGER}+1
             MINUS
             SELECT
-            HOMEWORK_STUDENTS.HOMEWORK_ID,HOMEWORK_NAME,HOMEWORK.CONTENT,
+            HOMEWORK_STUDENTS.HOMEWORK_ID,HOMEWORK.HOMEWORK_NAME,HOMEWORK.CONTENT,
             HOMEWORK.URI,DEADLINE,HOMEWORK.FILENAME,
             LESSON_NAME,HOMEWORK_STUDENTS.FINISH,HOMEWORK_STUDENTS.SCORE
             FROM HOMEWORK_STUDENTS
             LEFT JOIN HOMEWORK
-            ON HOMEWORK.HOMEWORK_ID=HOMEWORK_STUDENTS.ID
+            ON HOMEWORK.HOMEWORK_ID=HOMEWORK_STUDENTS.HOMEWORK_ID
+            LEFT JOIN HOMEWORK_LESSONS
+            ON HOMEWORK.HOMEWORK_ID=HOMEWORK_LESSONS.HOMEWORK_ID
             LEFT JOIN LESSONS
-            ON HOMEWORK.LESSON_ID=LESSONS.LESSON_ID
+            ON HOMEWORK_LESSONS.LESSON_ID=LESSONS.LESSON_ID
             WHERE STUDENT_ID=#{studentId,jdbcType=INTEGER}
             <if test="finish != null">
                 AND HOMEWORK_STUDENTS.FINISH=#{finish,jdbcType=INTEGER}

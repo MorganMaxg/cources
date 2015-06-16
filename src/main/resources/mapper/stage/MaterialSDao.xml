@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.springapp.stage.download.dao.MaterialDao">
+<mapper namespace="com.springapp.stage.download.dao.MaterialSDao">
     <resultMap id="materialMap" type="com.springapp.stage.download.entity.Material">
         <id column="MATERIAL_ID" jdbcType="INTEGER" property="materialId"/>
         <result column="MATERIAL_NAME" jdbcType="VARCHAR" property="materialName"/>

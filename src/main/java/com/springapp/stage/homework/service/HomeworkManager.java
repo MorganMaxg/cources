@@ -1,6 +1,6 @@
 package com.springapp.stage.homework.service;
 
-import com.springapp.stage.homework.dao.HomeworkDao;
+import com.springapp.stage.homework.dao.HomeworkSDao;
 import com.springapp.stage.homework.entity.Homework;
 import com.springapp.stage.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,29 +16,29 @@ import java.util.List;
 @Transactional
 public class HomeworkManager {
     @Autowired
-    HomeworkDao homeworkDao;
+    HomeworkSDao homeworkSDao;
 
     @Transactional(readOnly = true)
     public List<Homework> find(Integer studentId, Integer finish, Page page) {
-        return homeworkDao.find(studentId, finish, page);
+        return homeworkSDao.find(studentId, finish, page);
     }
 
     @Transactional(readOnly = true)
     public Homework findById(Integer id) {
-        Homework homework = homeworkDao.findById(id);
+        Homework homework = homeworkSDao.findById(id);
         return homework;
     }
 
     @Transactional
     public void submitHomework(Integer homeworkId, Integer lessonId, Integer studentId, String fileName) {
         String uri = "" + System.currentTimeMillis();
-        homeworkDao.updateHomeworkStudent(homeworkId, studentId, uri, fileName, 1);
-        homeworkDao.updateCount(homeworkId, lessonId);
+        homeworkSDao.updateHomeworkStudent(homeworkId, studentId, uri, fileName, 1);
+        homeworkSDao.updateCount(homeworkId, lessonId);
     }
 
     @Transactional(readOnly = true)
     public Homework findStudentHomework(Integer studentId, Integer homeworkId) {
-        return homeworkDao.findStudentHomework(studentId, homeworkId);
+        return homeworkSDao.findStudentHomework(studentId, homeworkId);
     }
 
 }
