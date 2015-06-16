@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.springapp.mvc.dao.HomeworkStudentsDao">
+    <resultMap id="HomeworkStudentsBaseResultMap" type="com.springapp.mvc.entity.HomeworkStudents">
+        <id column="ID" property="id" jdbcType="INTEGER"/>
+        <id column="HOMEWORK_ID" property="homeworkID" jdbcType="INTEGER"/>
+        <result column="SCORE" property="score" jdbcType="INTEGER"/>
+        <result column="STUDENT_ID" property="studentID" jdbcType="VARCHAR"/>
+        <result column="CLASS_NAME" property="className" jdbcType="VARCHAR"/>
+        <result column="URI" property="studentUri" jdbcType="VARCHAR"/>
+        <result column="FILENAME" property="studentFileName" jdbcType="VARCHAR"/>
+        <result column="STUDENT_NAME" property="studentName" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="findAllHomeworkStudents" resultMap="HomeworkStudentsBaseResultMap">
+        select * from HOMEWORK_STUDENTS natural join HOMEWORK natural join STUDENTS
+    </select>
+
+
+    <select id="findAllHomeworkStudentsByHomeworkID" resultMap="HomeworkStudentsBaseResultMap">
+        select * from HOMEWORK_STUDENTS
+        left join STUDENTS on HOMEWORK_STUDENTS.STUDENT_ID=STUDENTS.ID
+        left join CLASSES on STUDENTS.CLASS_ID=CLASSES.CLASS_ID
+        left join HOMEWORK_LESSONS ON HOMEWORK_LESSONS.HOMEWORK_LESSON_ID=HOMEWORK_STUDENTS.HOMEWORK_LESSON_ID
+        where HOMEWORK_STUDENTS.FINISH=1 and HOMEWORK_ID=#{homeworkID,jdbcType=INTEGER}
+        <if test="lessonID!=null and lessonID!=0">
+            and LESSON_ID=#{lessonID,jdbcType=INTEGER}
+        </if>
+    </select>
+
+    <select id="findAllHomeworkByStudentID" resultMap="HomeworkStudentsBaseResultMap">
+        select HOMEWORK_LESSONS.HOMEWORK_ID from HOMEWORK_STUDENTS
+        left jOIn HOMEWORK_LESSONS ON HOMEWORK_STUDENTS.HOMEWORK_LESSON_ID=HOMEWORK_LESSONS.HOMEWORK_LESSON_ID
+        WHERE HOMEWORK_STUDENTS.STUDENT_ID=#{homeworkID,jdbcType=INTEGER}
+    </select>
+
+    <select id="findHomeworkStudentsByTeacherFileName" resultMap="HomeworkStudentsBaseResultMap">
+        select * from HOMEWORK_STUDENTS natural join HOMEWORK natural join STUDENTS
+        where FILENAME=#{teacherFileName,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findHomeworkAndScoreByID" resultMap="HomeworkStudentsBaseResultMap">
+        select * from HOMEWORK_STUDENTS natural join HOMEWORK natural join STUDENTS
+        where ID=#{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="updateScore">
+        update HOMEWORK_STUDENTS
+        set SCORE=#{score,jdbcType=INTEGER}
+        where ID=#{id,jdbcType=INTEGER}
+    </update>
+
+
+</mapper>

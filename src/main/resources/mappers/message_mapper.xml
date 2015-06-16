@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.springapp.mvc.dao.MessageDao">
+    <resultMap id="MessageBaseResultMap" type="com.springapp.mvc.entity.Message">
+        <id column="MESSAGE_ID" property="messageID" jdbcType="INTEGER"/>
+        <id column="TEACHER_ID" property="teacherID" jdbcType="INTEGER"/>
+        <result column="TITLE" property="title" jdbcType="VARCHAR"/>
+        <result column="CREATE_DATE" property="createDate" jdbcType="DATE"/>
+        <result column="MESSAGE_CONTENT" property="messageContent" jdbcType="VARCHAR"/>
+        <result column="TEACHER_NAME" property="teacherName" jdbcType="VARCHAR"/>
+    </resultMap>
+    <insert id="addMessage">
+        insert into MESSAGES(TITLE,CREATE_DATE,TEACHER_ID,MESSAGE_CONTENT)
+        values(#{message.title,jdbcType=VARCHAR},#{message.createDate,jdbcType=TIMESTAMP},#{message.teacherID,jdbcType=INTEGER},#{message.messageContent,jdbcType=VARCHAR})
+    </insert>
+    <select id="teacherIDFindByName" parameterType="string" resultType="int">
+        select TEACHER_ID FROM TEACHERS
+        where TEACHER_NAME=#{teacherName,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findOneMessageByMessageID" parameterType="int" resultMap="MessageBaseResultMap">
+        select * from MESSAGES
+        where MESSAGES.MESSAGE_ID=#{messageID,jdbcType=INTEGER}
+    </select>
+
+    <select id="findAllMessage" resultMap="MessageBaseResultMap">
+        select * from MESSAGES LEFT JOIN TEACHERS ON MESSAGES.TEACHER_ID=TEACHERS.ID
+        where MESSAGES.TEACHER_ID=#{teacherID,jdbcType=INTEGER}
+    </select>
+
+
+    <update id="updateMessage">
+        update MESSAGES set
+        TITLE=#{message.title,jdbcType=VARCHAR},MESSAGE_CONTENT=#{message.messageContent,jdbcType=VARCHAR}
+        where MESSAGE_ID=#{message.messageID,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteMessage">
+        delete from MESSAGES
+        where MESSAGE_ID=#{messageID,jdbcType=INTEGER}
+    </delete>
+</mapper>

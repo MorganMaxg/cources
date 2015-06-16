@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.springapp.mvc.dao.LessonDao">
+    <resultMap id="LessonBaseResultMap" type="com.springapp.mvc.entity.Lesson">
+        <id column="LESSON_ID" property="lessonID" jdbcType="INTEGER"/>
+        <id column="TEACHER_ID" property="teacherID" jdbcType="INTEGER"/>
+        <id column="CLASS_ID" property="classID" jdbcType="INTEGER"/>
+        <id column="ID" property="id" jdbcType="INTEGER"/>
+        <result column="STUDENT_ID" property="studentID" jdbcType="VARCHAR"/>
+        <result column="SCORE" property="score" jdbcType="INTEGER"/>
+        <result column="STUDENT_NAME" property="studentName" jdbcType="VARCHAR"/>
+        <result column="CLASS_NAME" property="className" jdbcType="VARCHAR"/>
+        <result column="LESSON_SCORE" property="lessonScore" jdbcType="INTEGER"/>
+        <result column="LESSON_NAME" property="lessonName" jdbcType="VARCHAR"/>
+        <result column="CREATE_DATE" property="createDate" jdbcType="DATE"/>
+    </resultMap>
+    <select id="findAllLessonByTeacherID" resultMap="LessonBaseResultMap">
+        select * from LESSONS
+        where TEACHER_ID=#{teacherID,jdbcType=INTEGER}
+    </select>
+
+    <select id="findAllStudentIDByLessonID" resultMap="LessonBaseResultMap">
+        select STUDENT_ID from LESSONS_STUDENTS
+        where LESSON_ID=#{lessonID,jdbcType=INTEGER}
+    </select>
+
+    <select id="findSampleStudentInfoByLessonID" resultMap="LessonBaseResultMap">
+        select STUDENTS.ID,STUDENTS.STUDENT_ID,STUDENTS.STUDENT_NAME,CLASSES.CLASS_NAME from LESSONS_STUDENTS
+        LEFT JOIN STUDENTS ON LESSONS_STUDENTS.STUDENT_ID=STUDENTS.ID
+        LEFT JOIN CLASSES ON STUDENTS.CLASS_ID=CLASSES.CLASS_ID
+        WHERE LESSONS_STUDENTS.LESSON_ID=#{lessonID,jdbcType=INTEGER}
+    </select>
+
+    <select id="findAllStudentsByLessonID" resultMap="LessonBaseResultMap">
+        select STUDENTS.ID,STUDENTS.STUDENT_ID,STUDENTS.STUDENT_NAME,CLASSES.CLASS_NAME,HOMEWORK_STUDENTS.SCORE from
+        LESSONS_STUDENTS
+        LEFT JOIN STUDENTS ON LESSONS_STUDENTS.STUDENT_ID=STUDENTS.ID
+        LEFT JOIN CLASSES ON STUDENTS.CLASS_ID=CLASSES.CLASS_ID
+        LEFT JOIN HOMEWORK_STUDENTS ON HOMEWORK_STUDENTS.STUDENT_ID=STUDENTS.ID
+        LEFT JOIN HOMEWORK_LESSONS ON HOMEWORK_LESSONS.HOMEWORK_LESSON_ID=HOMEWORK_STUDENTS.HOMEWORK_LESSON_ID
+        WHERE LESSONS_STUDENTS.LESSON_ID=#{lessonID,jdbcType=INTEGER}
+        <if test="homeworkID!=null and homeworkID!=0">
+            AND HOMEWORK_LESSONS.HOMEWORK_ID=#{homeworkID,jdbcType=INTEGER}
+        </if>
+    </select>
+
+    <select id="findAllStudentsAndLessonFinalScoreByLessonID" resultMap="LessonBaseResultMap">
+        select STUDENTS.STUDENT_ID,STUDENTS.STUDENT_NAME,CLASSES.CLASS_NAME,LESSONS_STUDENTS.LESSON_SCORE
+        from LESSONS_STUDENTS
+        left join STUDENTS on STUDENTS.ID=LESSONS_STUDENTS.STUDENT_ID
+        LEFT JOIN CLASSES ON CLASSES.CLASS_ID=STUDENTS.CLASS_ID
+        where LESSONS_STUDENTS.LESSON_ID=#{lessonID,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insertLessonStudnet">
+        insert into LESSONS_STUDENTS(LESSONS_STUDENTS.LESSON_ID,LESSONS_STUDENTS.STUDENT_ID)
+        values(#{lessonID,jdbcType=INTEGER},#{id,jdbcType=INTEGER})
+    </insert>
+
+    <update id="updateFinalScore">
+        update LESSONS_STUDENTS
+        SET LESSONS_STUDENTS.LESSON_SCORE=#{finalScore,jdbcType=INTEGER}
+        where LESSONS_STUDENTS.LESSON_ID=#{lessonID,jdbcType=INTEGER}
+        and LESSONS_STUDENTS.STUDENT_ID=#{id,jdbcType=INTEGER}
+    </update>
+
+    <insert id="addLessonByTeacher">
+        insert into LESSONS(LESSON_NAME,TEACHER_ID,CREATE_DATE)
+        values(#{lessonName,jdbcType=VARCHAR},#{teacherID,jdbcType=INTEGER},#{date,jdbcType=DATE})
+    </insert>
+
+</mapper>

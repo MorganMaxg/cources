@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.springapp.mvc.dao.ExamDao">
+    <resultMap id="ExamBaseResultMap" type="com.springapp.mvc.entity.Exam">
+        <id column="EXAM_ID" property="examID" jdbcType="INTEGER"/>
+        <id column="LESSON_ID" property="lessonID" jdbcType="INTEGER"/>
+        <result column="LESSON_NAME" property="lessonName" jdbcType="VARCHAR"/>
+        <result column="PROPORTION" property="proportion" jdbcType="INTEGER"/>
+        <result column="EXAM_TITLE" property="examTitle" jdbcType="VARCHAR"/>
+        <result column="DEADLINE" property="deadline" jdbcType="DATE"/>
+        <result column="STARTTIME" property="startTime" jdbcType="DATE"/>
+        <result column="LESSON_NAME" property="lessonName" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="ExamQuestionBaseResultMap" type="com.springapp.mvc.entity.Exam">
+        <id column="EXAM_ID" property="examID" jdbcType="INTEGER"/>
+        <id column="QUESTION_ID" property="questionID" jdbcType="INTEGER"/>
+        <result column="EXAM_TITLE" property="examTitle" jdbcType="VARCHAR"/>
+        <result column="DEADLINE" property="deadline" jdbcType="DATE"/>
+        <result column="QUESTION_TYPE" property="questionType" jdbcType="VARCHAR"/>
+        <result column="CONTENT" property="content" jdbcType="VARCHAR"/>
+        <result column="ANSWER" property="answer" jdbcType="VARCHAR"/>
+        <result column="CHOICES" property="choices" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="ExamStudentQuestionBaseResultMap" type="com.springapp.mvc.entity.Exam">
+        <id column="EXAM_ID" property="examID" jdbcType="INTEGER"/>
+        <id column="QUESTION_ID" property="questionID" jdbcType="INTEGER"/>
+        <id column="ID" property="id" jdbcType="INTEGER"/>
+        <id column="LESSON_ID" property="lessonID" jdbcType="INTEGER"/>
+        <result column="EXAM_TITLE" property="examTitle" jdbcType="VARCHAR"/>
+        <result column="STUDENT_ANSWER" property="studentAnswer" jdbcType="VARCHAR"/>
+        <result column="QUESTION_TYPE" property="questionType" jdbcType="VARCHAR"/>
+        <result column="DEADLINE" property="deadline" jdbcType="DATE"/>
+        <result column="STUDENT_ID" property="studentID" jdbcType="VARCHAR"/>
+        <result column="SCORE" property="score" jdbcType="INTEGER"/>
+        <result column="STUDENT_NAME" property="studentName" jdbcType="VARCHAR"/>
+        <result column="CLASS_NAME" property="className" jdbcType="VARCHAR"/>
+    </resultMap>
+    <update id="updateStartTime">
+        update EXAMS
+        set STARTTIME=#{startTime,jdbcType=DATE}
+        where EXAM_ID=#{examID,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateDeadline">
+        update EXAMS
+        set DEADLINE=#{deadline,jdbcType=DATE}
+        where EXAM_ID=#{examID,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateLessonID">
+        update EXAMS
+        set LESSON_ID=#{lessonID,jdbcType=INTEGER}
+        where EXAM_ID=#{examID,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateExamSetProportion">
+         update EXAMS_LESSONS
+        set EXAMS_LESSONS.PROPORTION=#{proportion,jdbcType=INTEGER},EXAMS_LESSONS.FINISH=1
+        where EXAMS_LESSONS.EXAM_ID=#{examID,jdbcType=INTEGER}
+        and EXAMS_LESSONS.LESSON_ID=#{lessonID,jdbcType=INTEGER}
+    </update>
+
+    <insert id="addExamTitle">
+        insert into EXAMS (EXAM_ID,EXAM_TITLE)
+        values (EXAMS_SEQUENCE.NEXTVAL,#{exam.examTitle,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="addExamLesson">
+        insert into EXAMS_LESSONS(EXAM_ID,LESSON_ID)
+        values (#{examID,jdbcType=INTEGER},#{lessonID,jdbcType=INTEGER})
+    </insert>
+
+    <select id="findOneByOneRecordByExamIDAndStudntID" resultMap="ExamStudentQuestionBaseResultMap">
+        select * from EXAMS_STUDENTS_QUESTIONS
+        natural join QUESTIONS
+        where rownum &lt; #{currentPage,jdbcType=INTEGER}+1
+        and EXAMS_STUDENTS_QUESTIONS.EXAM_ID=#{examID,jdbcType=INTEGER}
+        and EXAMS_STUDENTS_QUESTIONS.STUDENT_ID=#{studentID,jdbcType=INTEGER}
+        and QUESTIONS.QUESTION_TYPE!='单选题'and QUESTIONS.QUESTION_TYPE!='判断题'
+        minus
+        select * from EXAMS_STUDENTS_QUESTIONS
+        natural join QUESTIONS
+        where rownum &lt; #{currentPage,jdbcType=INTEGER}
+        and EXAMS_STUDENTS_QUESTIONS.EXAM_ID=#{examID,jdbcType=INTEGER}
+        and EXAMS_STUDENTS_QUESTIONS.STUDENT_ID=#{studentID,jdbcType=INTEGER}
+        and QUESTIONS.QUESTION_TYPE!='单选题'and QUESTIONS.QUESTION_TYPE!='判断题'
+    </select>
+
+    <select id="findCountByExamIDAndStudntID" resultType="int">
+        select count(*) from EXAMS_STUDENTS_QUESTIONS
+        left join QUESTIONS ON QUESTIONS.QUESTION_ID=EXAMS_STUDENTS_QUESTIONS.QUESTION_ID
+        where  EXAMS_STUDENTS_QUESTIONS.EXAM_ID=#{examID,jdbcType=INTEGER}
+        and EXAMS_STUDENTS_QUESTIONS.STUDENT_ID=#{studentID,jdbcType=INTEGER}
+        and QUESTIONS.QUESTION_TYPE!='单选题'and QUESTIONS.QUESTION_TYPE!='判断题'
+    </select>
+
+    <update id="updateStudentScoreByExamIDAndStudntID">
+        update EXAMS_STUDENTS_QUESTIONS
+        set EXAMS_STUDENTS_QUESTIONS.SCORE=#{studentScore,jdbcType=INTEGER}
+        where  EXAMS_STUDENTS_QUESTIONS.EXAM_ID=#{examID,jdbcType=INTEGER}
+        and EXAMS_STUDENTS_QUESTIONS.STUDENT_ID=#{studentID,jdbcType=INTEGER}
+        and EXAMS_STUDENTS_QUESTIONS.QUESTION_ID=#{questionID,jdbcType=INTEGER}
+    </update>
+
+    <select id="findCurrentSequence" resultType="int">
+          select EXAMS_SEQUENCE.CURRVAL FROM DUAL
+    </select>
+
+    <insert id="addExamStudentToExam">
+        insert into EXAMS_STUDENTS(EXAM_ID,STUDENT_ID)
+        select EXAMS.EXAM_ID,LESSONS_STUDENTS.STUDENT_ID
+        from EXAMS
+        LEFT JOIN  EXAMS_LESSONS ON EXAMS_LESSONS.EXAM_ID=EXAMS.EXAM_ID
+        LEFT JOIN LESSONS_STUDENTS ON EXAMS_LESSONS.LESSON_ID=LESSONS_STUDENTS.LESSON_ID
+        where EXAMS.EXAM_ID=#{examID,jdbcType=INTEGER}
+    </insert>
+
+    <insert id="addReleaseExam">
+        insert into exams_students_questions(EXAM_ID,STUDENT_ID,QUESTION_ID)
+        SELECT EXAMS_QUESTIONS.EXAM_ID,EXAMS_STUDENTS.STUDENT_ID,EXAMS_QUESTIONS.QUESTION_ID
+        FROM EXAMS_QUESTIONS
+        LEFT JOIN  EXAMS_STUDENTS ON EXAMS_QUESTIONS.EXAM_ID=EXAMS_STUDENTS.EXAM_ID
+        WHERE EXAMS_QUESTIONS.EXAM_ID=#{examID,jdbcType=INTEGER}
+    </insert>
+
+
+    <insert id="addQuestionsToExam">
+        insert into EXAMS_QUESTIONS(EXAM_ID,QUESTION_ID)
+        values (#{examID,jdbcType=INTEGER},#{questionID,jdbcType=INTEGER})
+    </insert>
+
+    <select id="findAllQuestionsByExamID" resultMap="ExamQuestionBaseResultMap">
+         select * from EXAMS_QUESTIONS natural join QUESTIONS natural join EXAMS
+         where EXAM_ID=#{examID,jdbcType=INTEGER}
+    </select>
+
+    <select id="findExamLessonByExamID" resultMap="ExamBaseResultMap">
+          select * from EXAMS_LESSONS
+          left join LESSONS ON EXAMS_LESSONS.LESSON_ID=LESSONS.LESSON_ID
+          where EXAMS_LESSONS.EXAM_ID=#{examID,jdbcType=INTEGER}
+    </select>
+
+    <select id="findExamTitleByExamID" parameterType="int" resultType="string">
+          select EXAM_TITLE from EXAMS
+          where EXAM_ID=#{examID,jdbcType=INTEGER}
+    </select>
+
+    <select id="findExamScoreByExamIDAndStudentID" resultMap="ExamStudentQuestionBaseResultMap">
+            select STUDENTS.STUDENT_ID,STUDENTS.STUDENT_NAME,CLASSES.CLASS_NAME,EXAMS_STUDENTS.SCORE from LESSONS
+          left join LESSONS_STUDENTS ON LESSONS.LESSON_ID=LESSONS_STUDENTS.LESSON_ID
+          LEFT JOIN STUDENTS ON LESSONS_STUDENTS.STUDENT_ID=STUDENTS.ID
+          LEFT JOIN EXAMS_STUDENTS ON EXAMS_STUDENTS.STUDENT_ID=STUDENTS.ID
+          left join CLASSES ON CLASSES.CLASS_ID=STUDENTS.CLASS_ID
+          where LESSONS_STUDENTS.LESSON_ID=#{lessonID,jdbcType=INTEGER} and EXAMS_STUDENTS.EXAM_ID=#{examID,jdbcType=INTEGER}
+    </select>
+
+
+    <select id="findOnlyExams" resultMap="ExamBaseResultMap">
+        select * from EXAMS
+left join EXAMS_LESSONS ON EXAMS.EXAM_ID=EXAMS_LESSONS.EXAM_ID
+LEFT JOIN LESSONS ON LESSONS.LESSON_ID=EXAMS_LESSONS.LESSON_ID
+WHERE LESSONS.TEACHER_ID=#{teacherID,jdbcType=INTEGER}
+    </select>
+
+    <select id="findAllExamsLessons" resultMap="ExamBaseResultMap">
+        select * from EXAMS
+        LEFT JOIN EXAMS_LESSONS ON EXAMS.EXAM_ID=EXAMS_LESSONS.EXAM_ID
+        LEFT JOIN LESSONS ON LESSONS.LESSON_ID=EXAMS_LESSONS.LESSON_ID
+        WHERE LESSONS.TEACHER_ID=#{teacherID,jdbcType=INTEGER}
+        ORDER BY EXAMS.DEADLINE DESC
+    </select>
+
+    <select id="findStudentByExamIDAndLessonID" resultMap="ExamStudentQuestionBaseResultMap">
+        select EXAMS_LESSONS.EXAM_ID,EXAMS_LESSONS.LESSON_ID,LESSONS_STUDENTS.STUDENT_ID ID,STUDENTS.STUDENT_ID,STUDENTS.STUDENT_NAME,CLASSES.CLASS_NAME from EXAMS_LESSONS
+        left join LESSONS_STUDENTS ON EXAMS_LESSONS.LESSON_ID=LESSONS_STUDENTS.LESSON_ID
+        left join STUDENTS ON LESSONS_STUDENTS.STUDENT_ID=STUDENTS.ID
+        LEFT JOIN CLASSES ON STUDENTS.CLASS_ID=CLASSES.CLASS_ID
+        where EXAMS_LESSONS.EXAM_ID=#{examID,jdbcType=INTEGER} and EXAMS_LESSONS.LESSON_ID=#{lessonID,jdbcType=INTEGER}
+    </select>
+
+    <select id="findExamAndExamScoreByStudentID" resultMap="ExamStudentQuestionBaseResultMap">
+        select EXAMS.EXAM_TITLE,EXAMS.DEADLINE,EXAMS_STUDENTS.SCORE from STUDENTS
+        left join EXAMS_STUDENTS ON STUDENTS.ID=EXAMS_STUDENTS.STUDENT_ID
+        LEFT JOIN EXAMS ON EXAMS.EXAM_ID=EXAMS_STUDENTS.EXAM_ID
+        WHERE STUDENTS.ID=#{studentID,jdbcType=INTEGER}
+    </select>
+
+    <select id="findExamsByLessonID" resultMap="ExamBaseResultMap">
+        select * from EXAMS_LESSONS
+        left join EXAMS ON EXAMS.EXAM_ID=EXAMS_LESSONS.EXAM_ID
+        WHERE EXAMS_LESSONS.LESSON_ID=#{lessonID,jdbcType=INTEGER}
+    </select>
+
+</mapper>

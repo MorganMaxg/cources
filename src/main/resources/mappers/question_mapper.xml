@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.springapp.mvc.dao.QuestionDao">
+    <resultMap id="QuestionBaseManager" type="com.springapp.mvc.entity.Question">
+        <id column="QUESTION_ID" property="questionID" jdbcType="INTEGER"/>
+        <result column="QUESTION_TYPE" property="questionType" jdbcType="VARCHAR"/>
+        <result column="CONTENT" property="content" jdbcType="VARCHAR"/>
+        <result column="ANSWER" property="answer" jdbcType="VARCHAR"/>
+        <result column="CHOICES" property="choices" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="addSingleChoiceQuestion" parameterType="com.springapp.mvc.entity.Question">
+        insert into QUESTIONS(QUESTION_TYPE,CONTENT,ANSWER,CHOICES)
+        values
+        (#{questionType,jdbcType=VARCHAR},#{content,jdbcType=VARCHAR},#{answer,jdbcType=VARCHAR},#{choices,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="findByRandomAndLimitNum" resultMap="QuestionBaseManager" parameterType="java.util.Map">
+        select * from (select * from QUESTIONS order by dbms_random.value) where QUESTION_TYPE=#{type} AND rownum &lt;#{num}
+    </select>
+
+    <insert id="addCheckingQuestion" parameterType="com.springapp.mvc.entity.Question">
+        insert into QUESTIONS(QUESTION_TYPE,CONTENT,ANSWER,CHOICES)
+        values
+        (#{questionType,jdbcType=VARCHAR},#{content,jdbcType=VARCHAR},#{answer,jdbcType=VARCHAR},#{choices,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="addSubjectiveItemQuestion" parameterType="com.springapp.mvc.entity.Question">
+        insert into QUESTIONS(QUESTION_TYPE,CONTENT,ANSWER,CHOICES)
+        values
+        (#{questionType,jdbcType=VARCHAR},#{content,jdbcType=VARCHAR},#{answer,jdbcType=VARCHAR},#{choices,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="addShortAnswerQuestion" parameterType="com.springapp.mvc.entity.Question">
+        insert into QUESTIONS(QUESTION_TYPE,CONTENT,ANSWER,CHOICES)
+        values
+        (#{questionType,jdbcType=VARCHAR},#{content,jdbcType=VARCHAR},#{answer,jdbcType=VARCHAR},#{choices,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="findSingleChoiceQuestion" resultMap="QuestionBaseManager">
+        select * from QUESTIONS
+        where QUESTION_TYPE='单选题'
+    </select>
+
+    <select id="findCheckingQuestion" resultMap="QuestionBaseManager">
+        select * from QUESTIONS
+        where QUESTION_TYPE='判断题'
+    </select>
+
+    <select id="findSubjectiveItemQuestion" resultMap="QuestionBaseManager">
+        select * from QUESTIONS
+        where QUESTION_TYPE='主观题'
+    </select>
+
+    <select id="findShortAnswerQuestion" resultMap="QuestionBaseManager">
+        select * from QUESTIONS
+        where QUESTION_TYPE='简答题'
+    </select>
+
+</mapper>

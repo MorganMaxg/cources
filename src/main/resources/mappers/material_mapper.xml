@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.springapp.mvc.dao.MaterialDao">
+    <resultMap id="MaterialBaseResultMap" type="com.springapp.mvc.entity.Material">
+        <id column="MATERIAL_ID" property="materialID" jdbcType="INTEGER"/>
+        <result column="TEACHER_ID" property="teacherID" jdbcType="INTEGER"/>
+        <result column="MATERIAL_NAME" property="materialName" jdbcType="VARCHAR"/>
+        <result column="TEACHER_NAME" property="teacherName" jdbcType="VARCHAR"/>
+        <result column="CREATE_DATE" property="createDate" jdbcType="DATE"/>
+        <result column="URI" property="uri" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="findAllMaterial" resultMap="MaterialBaseResultMap">
+        select * from MATERIALS LEFT JOIN TEACHERS ON MATERIALS.TEACHER_ID=TEACHERS.ID
+        where MATERIALS.TEACHER_ID=#{teacherID,jdbcType=INTEGER}
+    </select>
+
+    <select id="teacherIDFindByName" parameterType="string" resultType="int">
+        select ID FROM TEACHERS
+        where TEACHER_NAME=#{teacherName,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findMaterialByMaterialID" resultMap="MaterialBaseResultMap">
+        select * from MATERIALS
+        where MATERIAL_ID=#{materialID,jdbcType=INTEGER}
+    </select>
+
+    <insert id="addMaterial">
+        INSERT INTO MATERIALS(MATERIAL_NAME,URI,TEACHER_ID,CREATE_DATE)
+        VALUES(#{materialName,jdbcType=VARCHAR},#{uri,jdbcType=VARCHAR},#{teacherID,jdbcType=INTEGER},#{createDate,jdbcType=DATE})
+    </insert>
+
+    <delete id="deleteMaterial" parameterType="int">
+        delete from MATERIALS
+        where MATERIALS.MATERIAL_ID=#{materialID,jdbcType=INTEGER}
+    </delete>
+</mapper>

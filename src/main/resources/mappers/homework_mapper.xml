@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.springapp.mvc.dao.HomeworkDao">
+    <resultMap id="HomeworkBaseResultMap" type="com.springapp.mvc.entity.Homework">
+        <id column="HOMEWORK_ID" property="homeworkID" jdbcType="INTEGER"/>
+        <id column="LESSON_ID" property="lessonID" jdbcType="INTEGER"/>
+        <result column="LESSON_NAME" property="lessonName" jdbcType="VARCHAR"/>
+        <result column="CONTENT" property="content" jdbcType="VARCHAR"/>
+        <result column="COUNT" property="count" jdbcType="INTEGER"/>
+        <result column="PROPORTION" property="proportion" jdbcType="INTEGER"/>
+        <result column="URI" property="teacherUri" jdbcType="VARCHAR"/>
+        <result column="FILENAME" property="teacherFileName" jdbcType="VARCHAR"/>
+        <result column="DEADLINE" property="deadline" jdbcType="DATE"/>
+        <result column="SCORE" property="score" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="findLessonIDByTeacherID" resultType="int">
+        select LESSON_ID FROM LESSONS
+        WHERE TEACHER_ID=#{teacherID,jdbcType=INTEGER}
+    </select>
+
+    <select id="findLessonsByHomeworkID" parameterType="int" resultMap="HomeworkBaseResultMap">
+        select * from HOMEWORK_LESSONS
+        LEFT JOIN LESSONS ON HOMEWORK_LESSONS.LESSON_ID=LESSONS.LESSON_ID
+        WHERE HOMEWORK_ID=#{homeworkID,jdbcType=INTEGER}
+    </select>
+
+    <select id="findAllHomework" resultMap="HomeworkBaseResultMap">
+        select * from HOMEWORK
+        left join HOMEWORK_LESSONS ON HOMEWORK.HOMEWORK_ID=HOMEWORK_LESSONS.HOMEWORK_ID
+        left join LESSONS ON LESSONS.LESSON_ID=HOMEWORK_LESSONS.LESSON_ID
+        where LESSONS.TEACHER_ID=#{teacherID,jdbcType=INTEGER}
+        order by DEADLINE desc
+    </select>
+
+    <select id="findAllHomeworkByLessonID" parameterType="int" resultMap="HomeworkBaseResultMap">
+        select *
+        from HOMEWORK_LESSONS
+        left join HOMEWORK ON HOMEWORK_LESSONS.HOMEWORK_ID=HOMEWORK.HOMEWORK_ID
+        where HOMEWORK_LESSONS.LESSON_ID=#{lessonID,jdbcType=INTEGER}
+    </select>
+
+    <select id="findAllHomeworkByID" parameterType="int" resultMap="HomeworkBaseResultMap">
+        select HOMEWORK.FILENAME,HOMEWORK.CONTENT,HOMEWORK.DEADLINE,HOMEWORK_STUDENTS.SCORE from HOMEWORK_STUDENTS
+        LEFT JOIN HOMEWORK_LESSONS ON HOMEWORK_STUDENTS.HOMEWORK_LESSON_ID=HOMEWORK_LESSONS.HOMEWORK_LESSON_ID
+        LEFT JOIN HOMEWORK ON HOMEWORK.HOMEWORK_ID=HOMEWORK_LESSONS.HOMEWORK_ID
+        where HOMEWORK_STUDENTS.STUDENT_ID=#{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="findTeacherFileNameByHomeworkID" resultType="string" parameterType="int">
+        select FILENAME from HOMEWORK
+        where HOMEWORK_ID=#{homeworkID,jdbcType=INTEGER}
+    </select>
+
+    <select id="findTeacherUriByHomeworkID" resultType="string" parameterType="int">
+        select URI from HOMEWORK
+        where HOMEWORK_ID=#{homeworkID,jdbcType=INTEGER}
+    </select>
+
+
+    <insert id="addHomeworkAndAddStudents">
+        INSERT INTO HOMEWORK_STUDENTS (HOMEWORK_LESSON_ID,STUDENT_ID)
+        SELECT HOMEWORK_LESSON_ID,STUDENT_ID FROM LESSONS_STUDENTS LEFT JOIN HOMEWORK_LESSONS ON
+        LESSONS_STUDENTS.LESSON_ID=HOMEWORK_LESSONS.LESSON_ID
+        WHERE HOMEWORK_LESSONS.HOMEWORK_LESSON_ID=#{homeworkLessonID,jdbcType=INTEGER} AND
+        LESSONS_STUDENTS.LESSON_ID=#{lessonID,jdbcType=INTEGER}
+    </insert>
+
+
+    <insert id="addHomework">
+        insert into HOMEWORK(HOMEWORK_ID,CONTENT,URI,DEADLINE,FILENAME)
+        VALUES
+        (HOMEWORK_SEQUENCE.NEXTVAL,#{homework.content,jdbcType=VARCHAR},#{homework.teacherUri,jdbcType=VARCHAR},#{homework.deadline,jdbcType=DATE},#{homework.teacherFileName,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="addHomeworkLesson">
+        insert into HOMEWORK_LESSONS(HOMEWORK_LESSON_ID,HOMEWORK_ID,LESSON_ID)
+        VALUES (HOMEWORK_LESSONS_SQ.NEXTVAL,#{homeworkID,jdbcType=INTEGER},#{lessonID,jdbcType=INTEGER})
+    </insert>
+
+    <select id="findCurrentHomeworkLessonSequence" resultType="int">
+        select HOMEWORK_LESSONS_SQ.CURRVAL FROM DUAL
+    </select>
+
+    <select id="findCurrentHomeworkSequence" resultType="int">
+        select HOMEWORK_SEQUENCE.CURRVAL FROM DUAL
+    </select>
+
+
+    <update id="updateSetHomeworkProportion">
+        update HOMEWORK_LESSONS
+        set HOMEWORK_LESSONS.PROPORTION=#{proportion,jdbcType=INTEGER},HOMEWORK_LESSONS.FINISH=1
+        where HOMEWORK_LESSONS.HOMEWORK_ID=#{homeworkID,jdbcType=INTEGER}
+        and HOMEWORK_LESSONS.LESSON_ID=#{lessonID,jdbcType=INTEGER}
+    </update>
+
+
+</mapper>

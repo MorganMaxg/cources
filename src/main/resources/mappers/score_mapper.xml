@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.springapp.mvc.dao.ScoreDao">
+    <resultMap id="ExamScoreBaseInfoResultMap" type="com.springapp.mvc.entity.Score">
+        <id column="STUDENT_ID" property="id" jdbcType="INTEGER"/>
+        <result column="PROPORTION" property="proportion" jdbcType="INTEGER"/>
+        <result column="SCORE" property="score" jdbcType="INTEGER"/>
+    </resultMap>
+    <resultMap id="HomeworkScoreBaseInfoResultMap" type="com.springapp.mvc.entity.Score">
+        <id column="STUDENT_ID" property="id" jdbcType="INTEGER"/>
+        <result column="PROPORTION" property="proportion" jdbcType="INTEGER"/>
+        <result column="SCORE" property="score" jdbcType="INTEGER"/>
+    </resultMap>
+    <select id="findExamProportionAndScoreByStudentID" resultMap="ExamScoreBaseInfoResultMap">
+        select * from EXAMS_LESSONS
+        LEFT JOIN LESSONS_STUDENTS ON EXAMS_LESSONS.LESSON_ID=LESSONS_STUDENTS.LESSON_ID
+        LEFT JOIN EXAMS_STUDENTS ON EXAMS_LESSONS.EXAM_ID=EXAMS_STUDENTS.EXAM_ID AND
+        LESSONS_STUDENTS.STUDENT_ID=EXAMS_STUDENTS.STUDENT_ID
+        WHERE LESSONS_STUDENTS.STUDENT_ID=#{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="findHomeworkProportionAndScoreByStudentID" resultMap="HomeworkScoreBaseInfoResultMap">
+        select * from HOMEWORK_LESSONS
+        left join LESSONS_STUDENTS ON LESSONS_STUDENTS.LESSON_ID=HOMEWORK_LESSONS.LESSON_ID
+        LEFT JOIN HOMEWORK_STUDENTS ON HOMEWORK_LESSONS.HOMEWORK_LESSON_ID=HOMEWORK_STUDENTS.HOMEWORK_LESSON_ID
+        AND HOMEWORK_STUDENTS.STUDENT_ID=LESSONS_STUDENTS.STUDENT_ID
+        WHERE LESSONS_STUDENTS.STUDENT_ID=#{id,jdbcType=INTEGER}
+    </select>
+
+</mapper>

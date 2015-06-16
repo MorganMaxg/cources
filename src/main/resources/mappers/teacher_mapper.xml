@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.springapp.mvc.dao.TeacherDao">
+    <resultMap id="TeacherBaseResultMap" type="com.springapp.mvc.entity.Teacher">
+        <id column="ID" property="id" jdbcType="INTEGER"/>
+        <result column="TEACHER_ID" property="teacherID" jdbcType="VARCHAR"/>
+        <result column="TEACHER_NAME" property="teacherName" jdbcType="VARCHAR"/>
+        <result column="BASIC_INFO" property="basicInfo" jdbcType="VARCHAR"/>
+        <result column="PASSWORD" property="password" jdbcType="VARCHAR"/>
+        <result column="TYPE" property="type" jdbcType="INTEGER"/>
+    </resultMap>
+    <select id="findByTeacherID" resultMap="TeacherBaseResultMap">
+        select * from TEACHERS where TEACHERS.TEACHER_ID=#{teacherID,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findPasswordByTeacherID" resultType="string">
+        select TEACHERS.PASSWORD from TEACHERS
+        WHERE TEACHER_ID=#{username,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findAllTeachers" resultMap="TeacherBaseResultMap">
+        select * from TEACHERS
+    </select>
+
+    <select id="findOneTeachers" resultMap="TeacherBaseResultMap">
+        select * from TEACHERS where TEACHERS.ID=#{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="addTeacher">
+        insert into TEACHERS(TEACHER_ID,TEACHER_NAME,BASIC_INFO)
+        values (#{teacherID,jdbcType=VARCHAR},#{teacherName,jdbcType=VARCHAR},#{basicInfo,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateTeacher">
+        update TEACHERS set
+        TEACHER_ID=#{teacher.teacherID,jdbcType=VARCHAR},TEACHER_NAME=#{teacher.teacherName,jdbcType=VARCHAR},BASIC_INFO=#{teacher.basicInfo,jdbcType=VARCHAR}
+        where TEACHERS.ID=#{teacher.id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteTeacher">
+        delete TEACHERS
+        where TEACHERS.ID=#{id,jdbcType=INTEGER}
+    </delete>
+</mapper>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.springapp.mvc.dao.StudentDao">
+    <resultMap id="StudentBaseManager" type="com.springapp.mvc.entity.Student">
+        <id column="ID" property="id" jdbcType="INTEGER"/>
+        <id column="CLASS_ID" property="classID" jdbcType="INTEGER"/>
+        <result column="STUDENT_ID" property="studentID" jdbcType="VARCHAR"/>
+        <result column="STUDENT_NAME" property="studentName" jdbcType="VARCHAR"/>
+        <result column="PASSWORD" property="password" jdbcType="VARCHAR"/>
+        <result column="CLASS_NAME" property="className" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--临时学生表-->
+    <resultMap id="TempStudentBaseManager" type="com.springapp.mvc.entity.Student">
+        <id column="TEMPSTUDENTS_ID" property="tempStudentsID" jdbcType="INTEGER"/>
+        <id column="STUDENT_ID" property="studentID" jdbcType="INTEGER"/>
+        <result column="STUDENT_NAME" property="studentName" jdbcType="VARCHAR"/>
+        <result column="CLASS_NAME" property="className" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!--返回的类型是一个集合,用resultMap-->
+    <select id="findAllStudents" resultMap="StudentBaseManager">
+        SELECT *
+        FROM STUDENTS LEFT JOIN CLASSES ON STUDENTS.CLASS_ID=CLASSES.CLASS_ID order by STUDENT_ID
+    </select>
+
+
+    <select id="findOneStudentByStudentID" resultMap="StudentBaseManager">
+        select * from STUDENTS LEFT JOIN CLASSES ON STUDENTS.CLASS_ID=CLASSES.CLASS_ID
+        where STUDENTS.ID=#{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="findOneStudentByID" resultMap="StudentBaseManager">
+        select * from STUDENTS LEFT JOIN CLASSES ON STUDENTS.CLASS_ID=CLASSES.CLASS_ID
+        where ID=#{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="addStudent">
+        INSERT into STUDENTS(ID,STUDENT_ID,STUDENT_NAME,CLASS_ID)
+        values
+        (STUDENTS_SEQUENCE.NEXTVAL,#{studentID,jdbcType=VARCHAR},#{studentName,jdbcType=VARCHAR},#{classID,jdbcType=INTEGER})
+    </insert>
+
+    <select id="findCurrentStudentSequence" resultType="int">
+        select STUDENTS_SEQUENCE.CURRVAL FROM DUAL
+    </select>
+
+    <select id="classIDFindByName" parameterType="string" resultType="int">
+        select CLASS_ID
+        from CLASSES
+        where CLASSES.CLASS_NAME=#{className,jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateStudent">
+        update STUDENTS set
+        STUDENT_ID=#{student.studentID,jdbcType=VARCHAR},STUDENT_NAME=#{student.studentName,jdbcType=VARCHAR},CLASS_ID=#{student.classID,jdbcType=INTEGER}
+        where ID=#{student.id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteStudent" parameterType="int">
+        delete from STUDENTS
+        where STUDENTS.ID=#{id,jdbcType=INTEGER}
+    </delete>
+
+</mapper>

@@ -1,0 +1,21 @@
+<insert id="addExamTitle">
+        insert into EXAMS (EXAM_TITLE)
+        values (#{exam.examTitle,jdbcType=VARCHAR})
+        returning EXAM_ID into #{exam.examID,jdbcType=INTEGER}
+    </insert>
+
+<insert id="addExamStudentToExam">
+         insert into EXAMS_STUDENTS(EXAM_ID,STUDENT_ID)
+        select EXAMS.EXAM_ID,LESSONS_STUDENTS.STUDENT_ID
+        from EXAMS LEFT JOIN  LESSONS_STUDENTS
+        ON EXAMS.LESSON_ID=LESSONS_STUDENTS.LESSON_ID
+        where EXAMS.EXAM_ID=#{examID,jdbcType=INTEGER}
+    </insert>
+
+<insert id="addReleaseExam">
+        insert into exams_students_questions(EXAM_ID,STUDENT_ID,QUESTION_ID)
+        SELECT EXAMS_QUESTIONS.EXAM_ID,EXAMS_STUDENTS.STUDENT_ID,EXAMS_QUESTIONS.QUESTION_ID
+         FROM EXAMS_QUESTIONS
+        LEFT JOIN  EXAMS_STUDENTS ON EXAMS_QUESTIONS.EXAM_ID=EXAMS_STUDENTS.EXAM_ID
+          WHERE EXAMS_QUESTIONS.EXAM_ID=#{examID,jdbcType=INYEGER}
+    </insert>
