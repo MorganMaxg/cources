@@ -53,4 +53,6 @@ public interface ExamDao {
     public int findCountByExamIDAndStudntID(@Param("examID") int examID, @Param("studentID") int studentID);
 
     public void updateStudentScoreByExamIDAndStudntID(@Param("studentScore") int studentScore, @Param("questionID") int questionID, @Param("examID") int examID, @Param("studentID") int studentID);
+
+    public List<Exam> findAllExams();
 }

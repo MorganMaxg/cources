@@ -36,8 +36,12 @@
                 <tbody>
                 <%
                     List<HomeworkStudents> homeworkStudents = (List<HomeworkStudents>) request.getAttribute("homeworkStudents");
+                %>
+
+                <%
                     for (HomeworkStudents homeworkStudent : homeworkStudents) {
                 %>
+                <input type="text" name="lessonID" class="hidden" value="<%=request.getAttribute("lessonID")%>">
                 <tr>
                     <td><%=homeworkStudent.getStudentID()%>
                     </td>

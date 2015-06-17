@@ -88,6 +88,7 @@ public class HomeworkController {
     public String saveStudentHomeworkScore(HttpServletRequest request) {
         String[] arrScore = request.getParameterValues("score"); //学生成绩
         String[] arrID = request.getParameterValues("id");//作业学生表主键
+        int lessonID = Integer.parseInt(request.getParameter("lessonID"));
         int score;
         int id;
         for (int i = 0; i < arrScore.length; i++) {
@@ -99,7 +100,8 @@ public class HomeworkController {
                 e.printStackTrace();
             }
         }
-        return "redirect:/admin/checkHomework/showHomeworkName";
+        String tempUrl = "redirect:/admin/checkHomework/showHomeworkName?lessonID=" + lessonID;
+        return tempUrl;
     }
 
     @RequestMapping("/checkHomework/management")
@@ -107,6 +109,7 @@ public class HomeworkController {
         List<HomeworkStudents> homeworkStudentList = homeworkStudentsService.findAllHomeworkStudentsByHomeworkID(homeworkID, lessonID);
         modelMap.addAttribute("homeworkStudents", homeworkStudentList);
         modelMap.addAttribute("homeworkID", homeworkID);
+        modelMap.addAttribute("lessonID", lessonID);
         return "/admin/homework_checking_management";
     }
 
@@ -143,7 +146,7 @@ public class HomeworkController {
                 //绑定HOMEWORK和LESSON的属性
                 int homeworkLessonID = homeworkService.addHomeworkAndLessonAndReturnHomeworkLessonID(homeworkID, lessonID);
                 //同时绑定HOMEWORK和STUDENT的属性
-                homeworkService.addHomeworkAndAddStudents(homeworkLessonID,homeworkID, lessonID);
+                homeworkService.addHomeworkAndAddStudents(homeworkLessonID, homeworkID, lessonID);
             }
             FileUtils.upload("" + uri, part, files, request);
         } catch (Exception e) {

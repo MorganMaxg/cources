@@ -123,4 +123,9 @@ public class ExamService {
     public void updateStudentScoreByExamIDAndStudntID(int studentScore, int questionID, int examID, int studentID) {
         examDao.updateStudentScoreByExamIDAndStudntID(studentScore, questionID, examID, studentID);
     }
+
+    @Transactional
+    public List<Exam> findAllExams() {
+        return examDao.findAllExams();
+    }
 }

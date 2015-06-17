@@ -54,7 +54,7 @@
     </update>
 
     <update id="updateExamSetProportion">
-         update EXAMS_LESSONS
+        update EXAMS_LESSONS
         set EXAMS_LESSONS.PROPORTION=#{proportion,jdbcType=INTEGER},EXAMS_LESSONS.FINISH=1
         where EXAMS_LESSONS.EXAM_ID=#{examID,jdbcType=INTEGER}
         and EXAMS_LESSONS.LESSON_ID=#{lessonID,jdbcType=INTEGER}
@@ -89,7 +89,7 @@
     <select id="findCountByExamIDAndStudntID" resultType="int">
         select count(*) from EXAMS_STUDENTS_QUESTIONS
         left join QUESTIONS ON QUESTIONS.QUESTION_ID=EXAMS_STUDENTS_QUESTIONS.QUESTION_ID
-        where  EXAMS_STUDENTS_QUESTIONS.EXAM_ID=#{examID,jdbcType=INTEGER}
+        where EXAMS_STUDENTS_QUESTIONS.EXAM_ID=#{examID,jdbcType=INTEGER}
         and EXAMS_STUDENTS_QUESTIONS.STUDENT_ID=#{studentID,jdbcType=INTEGER}
         and QUESTIONS.QUESTION_TYPE!='单选题'and QUESTIONS.QUESTION_TYPE!='判断题'
     </select>
@@ -97,20 +97,20 @@
     <update id="updateStudentScoreByExamIDAndStudntID">
         update EXAMS_STUDENTS_QUESTIONS
         set EXAMS_STUDENTS_QUESTIONS.SCORE=#{studentScore,jdbcType=INTEGER}
-        where  EXAMS_STUDENTS_QUESTIONS.EXAM_ID=#{examID,jdbcType=INTEGER}
+        where EXAMS_STUDENTS_QUESTIONS.EXAM_ID=#{examID,jdbcType=INTEGER}
         and EXAMS_STUDENTS_QUESTIONS.STUDENT_ID=#{studentID,jdbcType=INTEGER}
         and EXAMS_STUDENTS_QUESTIONS.QUESTION_ID=#{questionID,jdbcType=INTEGER}
     </update>
 
     <select id="findCurrentSequence" resultType="int">
-          select EXAMS_SEQUENCE.CURRVAL FROM DUAL
+        select EXAMS_SEQUENCE.CURRVAL FROM DUAL
     </select>
 
     <insert id="addExamStudentToExam">
         insert into EXAMS_STUDENTS(EXAM_ID,STUDENT_ID)
         select EXAMS.EXAM_ID,LESSONS_STUDENTS.STUDENT_ID
         from EXAMS
-        LEFT JOIN  EXAMS_LESSONS ON EXAMS_LESSONS.EXAM_ID=EXAMS.EXAM_ID
+        LEFT JOIN EXAMS_LESSONS ON EXAMS_LESSONS.EXAM_ID=EXAMS.EXAM_ID
         LEFT JOIN LESSONS_STUDENTS ON EXAMS_LESSONS.LESSON_ID=LESSONS_STUDENTS.LESSON_ID
         where EXAMS.EXAM_ID=#{examID,jdbcType=INTEGER}
     </insert>
@@ -119,7 +119,7 @@
         insert into exams_students_questions(EXAM_ID,STUDENT_ID,QUESTION_ID)
         SELECT EXAMS_QUESTIONS.EXAM_ID,EXAMS_STUDENTS.STUDENT_ID,EXAMS_QUESTIONS.QUESTION_ID
         FROM EXAMS_QUESTIONS
-        LEFT JOIN  EXAMS_STUDENTS ON EXAMS_QUESTIONS.EXAM_ID=EXAMS_STUDENTS.EXAM_ID
+        LEFT JOIN EXAMS_STUDENTS ON EXAMS_QUESTIONS.EXAM_ID=EXAMS_STUDENTS.EXAM_ID
         WHERE EXAMS_QUESTIONS.EXAM_ID=#{examID,jdbcType=INTEGER}
     </insert>
 
@@ -130,36 +130,41 @@
     </insert>
 
     <select id="findAllQuestionsByExamID" resultMap="ExamQuestionBaseResultMap">
-         select * from EXAMS_QUESTIONS natural join QUESTIONS natural join EXAMS
-         where EXAM_ID=#{examID,jdbcType=INTEGER}
+        select * from EXAMS_QUESTIONS natural join QUESTIONS natural join EXAMS
+        where EXAM_ID=#{examID,jdbcType=INTEGER}
     </select>
 
     <select id="findExamLessonByExamID" resultMap="ExamBaseResultMap">
-          select * from EXAMS_LESSONS
-          left join LESSONS ON EXAMS_LESSONS.LESSON_ID=LESSONS.LESSON_ID
-          where EXAMS_LESSONS.EXAM_ID=#{examID,jdbcType=INTEGER}
+        select * from EXAMS_LESSONS
+        left join LESSONS ON EXAMS_LESSONS.LESSON_ID=LESSONS.LESSON_ID
+        where EXAMS_LESSONS.EXAM_ID=#{examID,jdbcType=INTEGER}
     </select>
 
     <select id="findExamTitleByExamID" parameterType="int" resultType="string">
-          select EXAM_TITLE from EXAMS
-          where EXAM_ID=#{examID,jdbcType=INTEGER}
+        select EXAM_TITLE from EXAMS
+        where EXAM_ID=#{examID,jdbcType=INTEGER}
     </select>
 
     <select id="findExamScoreByExamIDAndStudentID" resultMap="ExamStudentQuestionBaseResultMap">
-            select STUDENTS.STUDENT_ID,STUDENTS.STUDENT_NAME,CLASSES.CLASS_NAME,EXAMS_STUDENTS.SCORE from LESSONS
-          left join LESSONS_STUDENTS ON LESSONS.LESSON_ID=LESSONS_STUDENTS.LESSON_ID
-          LEFT JOIN STUDENTS ON LESSONS_STUDENTS.STUDENT_ID=STUDENTS.ID
-          LEFT JOIN EXAMS_STUDENTS ON EXAMS_STUDENTS.STUDENT_ID=STUDENTS.ID
-          left join CLASSES ON CLASSES.CLASS_ID=STUDENTS.CLASS_ID
-          where LESSONS_STUDENTS.LESSON_ID=#{lessonID,jdbcType=INTEGER} and EXAMS_STUDENTS.EXAM_ID=#{examID,jdbcType=INTEGER}
+        select STUDENTS.STUDENT_ID,STUDENTS.STUDENT_NAME,CLASSES.CLASS_NAME,EXAMS_STUDENTS.SCORE from LESSONS
+        left join LESSONS_STUDENTS ON LESSONS.LESSON_ID=LESSONS_STUDENTS.LESSON_ID
+        LEFT JOIN STUDENTS ON LESSONS_STUDENTS.STUDENT_ID=STUDENTS.ID
+        LEFT JOIN EXAMS_STUDENTS ON EXAMS_STUDENTS.STUDENT_ID=STUDENTS.ID
+        left join CLASSES ON CLASSES.CLASS_ID=STUDENTS.CLASS_ID
+        where LESSONS_STUDENTS.LESSON_ID=#{lessonID,jdbcType=INTEGER} and
+        EXAMS_STUDENTS.EXAM_ID=#{examID,jdbcType=INTEGER}
     </select>
 
 
     <select id="findOnlyExams" resultMap="ExamBaseResultMap">
         select * from EXAMS
-left join EXAMS_LESSONS ON EXAMS.EXAM_ID=EXAMS_LESSONS.EXAM_ID
-LEFT JOIN LESSONS ON LESSONS.LESSON_ID=EXAMS_LESSONS.LESSON_ID
-WHERE LESSONS.TEACHER_ID=#{teacherID,jdbcType=INTEGER}
+        left join EXAMS_LESSONS ON EXAMS.EXAM_ID=EXAMS_LESSONS.EXAM_ID
+        LEFT JOIN LESSONS ON LESSONS.LESSON_ID=EXAMS_LESSONS.LESSON_ID
+        WHERE LESSONS.TEACHER_ID=#{teacherID,jdbcType=INTEGER}
+    </select>
+
+    <select id="findAllExams" resultMap="ExamBaseResultMap">
+        select * from EXAMS
     </select>
 
     <select id="findAllExamsLessons" resultMap="ExamBaseResultMap">
@@ -171,7 +176,8 @@ WHERE LESSONS.TEACHER_ID=#{teacherID,jdbcType=INTEGER}
     </select>
 
     <select id="findStudentByExamIDAndLessonID" resultMap="ExamStudentQuestionBaseResultMap">
-        select EXAMS_LESSONS.EXAM_ID,EXAMS_LESSONS.LESSON_ID,LESSONS_STUDENTS.STUDENT_ID ID,STUDENTS.STUDENT_ID,STUDENTS.STUDENT_NAME,CLASSES.CLASS_NAME from EXAMS_LESSONS
+        select EXAMS_LESSONS.EXAM_ID,EXAMS_LESSONS.LESSON_ID,LESSONS_STUDENTS.STUDENT_ID
+        ID,STUDENTS.STUDENT_ID,STUDENTS.STUDENT_NAME,CLASSES.CLASS_NAME from EXAMS_LESSONS
         left join LESSONS_STUDENTS ON EXAMS_LESSONS.LESSON_ID=LESSONS_STUDENTS.LESSON_ID
         left join STUDENTS ON LESSONS_STUDENTS.STUDENT_ID=STUDENTS.ID
         LEFT JOIN CLASSES ON STUDENTS.CLASS_ID=CLASSES.CLASS_ID

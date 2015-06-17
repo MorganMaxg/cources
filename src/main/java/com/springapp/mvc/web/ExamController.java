@@ -47,9 +47,9 @@ public class ExamController {
 
     @RequestMapping("/exam/showTitle")
     public String findTitleJSP(ModelMap modelMap, HttpSession session) {
-        Teacher teacher = (Teacher) session.getAttribute("teacher");
-        int teacherID = teacher.getId();
-        List<Exam> findAllExamTitleLists = examService.findOnlyExams(teacherID);
+//        Teacher teacher = (Teacher) session.getAttribute("teacher");
+//        int teacherID = teacher.getId();
+        List<Exam> findAllExamTitleLists = examService.findAllExams();
         modelMap.addAttribute("findAllExamTitles", findAllExamTitleLists);
         return "/admin/exam_show_title";
     }
@@ -58,7 +58,7 @@ public class ExamController {
     public String releaseExamJSP(ModelMap modelMap, HttpSession session) {
         Teacher teacher = (Teacher) session.getAttribute("teacher");
         int teacherID = teacher.getId();
-        List<Exam> findAllExamTitleLists = examService.findOnlyExams(teacherID);
+        List<Exam> findAllExamTitleLists = examService.findAllExams();
         modelMap.addAttribute("findAllExamTitles", findAllExamTitleLists);
         List<Lesson> lessonList = lessonService.findAllLessonByTeacherID(teacherID);
         modelMap.addAttribute("lessons", lessonList);

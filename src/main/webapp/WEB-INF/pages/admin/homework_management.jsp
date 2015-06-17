@@ -40,12 +40,13 @@
             <tr>
                 <th>
                     <%=homework.getHomeworkName()%>
-                     </th>
+                </th>
                 <th><%out.print(homework.getContent());%></th>
                 <th><%=DateFormatUtils.format(homework.getDeadline(), "yyyy-MM-dd HH:MM:SS")%>
                 </th>
-                <th><a href="/admin/homework/download?uri=<%=homework.getTeacherUri()%>&fileName=<%=homework.getTeacherFileName()%>"><%
-                    out.print(homework.getTeacherFileName().substring(0, homework.getTeacherFileName().indexOf(".")));%></a>
+                <th>
+                    <a href="/admin/homework/download?uri=<%=homework.getTeacherUri()%>&fileName=<%=homework.getTeacherFileName()%>"><%
+                        out.print(homework.getTeacherFileName().substring(0, homework.getTeacherFileName().indexOf(".")));%></a>
                 </th>
                 <th>
                     <a href="/admin/homework/download?uri=<%=homework.getTeacherUri()%>&fileName=<%=homework.getTeacherFileName()%>"

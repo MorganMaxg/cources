@@ -55,10 +55,13 @@
                         <strong>已结束</strong>
                     </div>
                 </td>
-                <td><a href="/admin/score/findExamScoreByExam/showLesson?examID=<%=exam.getExamID()%>">查询</a></td>
                 <%
                     }
                 %>
+                <td>
+                    <a href="/admin/score/findExamScoreByExam/showLesson?examID=<%=exam.getExamID()%>">查询</a>
+                </td>
+
             </tr>
             <%
                 }
