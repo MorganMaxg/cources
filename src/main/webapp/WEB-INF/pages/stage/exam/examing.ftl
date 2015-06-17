@@ -103,7 +103,7 @@
 
                             <p style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${question.content!}</p>
                         </div>
-                        <#if question.questionType=="选择题">
+                        <#if question.questionType=="单选题">
                             <div id="chooseDiv" class="panel">
                                 <strong style="font-size:20px">选项:</strong>
 
@@ -162,7 +162,7 @@
                                 </p>
                             </div>
                         </#if>
-                        <#if question.questionType=="主观题">
+                        <#if question.questionType=="主观题" || question.questionType=='简答题'>
                             <div id="radioDiv" class="panel">
                                 <strong style="font-size:20px">答案:</strong>
 

@@ -22,18 +22,19 @@ public class MessageManager {
     private MessageSDao messageSDao;
 
     @Transactional(readOnly = true)
-    public List<Message> findMessages(Page page) throws Exception {
-        return messageSDao.findMessages(page);
+    public List<Message> findMessages(Integer studentId,Page page) throws Exception {
+        return messageSDao.findMessages(studentId,page);
     }
 
     @Transactional(readOnly = true)
-    public Integer countMessages() throws Exception {
-        return messageSDao.countMessages();
+    public Integer countMessages( Integer studentId) throws Exception {
+        return messageSDao.countMessages(studentId);
     }
 
     @Transactional(readOnly = true)
     public Message findMessageById(Integer messageId) {
         return messageSDao.findMessageById(messageId);
     }
+
 
 }

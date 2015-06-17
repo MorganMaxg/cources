@@ -47,13 +47,13 @@
                 <#list Request.homeworks as item>
                 <tr>
                     <td>${item.homeworkId}</td>
-                    <td>${item.lessonName}</td>
+                    <td>${item.lessonName!}</td>
                     <td><a href="/stage/homework/view?id=${item.homeworkId}&finish=${finish}">${item.homeworkName}</a>
                     </td>
                     <td>${item.deadline?string("yyyy-MM-dd")}</td>
                     <td>
                         <#if finish==0>
-                            <a href="/stage/homework/view?id=${item.homeworkId}">查看</a>
+                            <a href="/stage/homework/view?id=${item.homeworkId}&finish=${finish}">查看</a>
                         <#else>
                             已提交
                         </#if>

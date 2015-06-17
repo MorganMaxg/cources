@@ -5,7 +5,7 @@
 </head>
 <div>
     <table class="table table-bordered table-fixed table-hover">
-        <form method="post" enctype="multipart/form-data" action="/stage/homework/submit">
+        <form method="post" enctype="multipart/form-data" action="/stage/homework/finish">
             <input type="hidden" name="homeworkId" value="${homework.homeworkId!}">
             <legend class="label-primary">作业信息</legend>
             <tr>
@@ -32,7 +32,7 @@
                     <a href="/stage/homework/download?uri=${homework.uri!}&fileName=${homework.fileName!}">${homework.fileName!}</a>
                 </td>
             </tr>
-            <#if finish==0>
+            <#if finish==0 || finish==null>
                 <tr>
                     <td style="width: 100px">
                         <b>学生答案</b>

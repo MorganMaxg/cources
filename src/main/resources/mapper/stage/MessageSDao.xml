@@ -15,6 +15,12 @@
         FROM MESSAGES
         LEFT JOIN TEACHERS ON TEACHERS.ID=MESSAGES.TEACHER_ID
         <where>
+            MESSAGES.TEACHER_ID IN (
+            SELECT LESSONS.TEACHER_ID
+            FROM LESSONS
+            LEFT JOIN LESSONS_STUDENTS ON LESSONS_STUDENTS.LESSON_ID=LESSONS.LESSON_ID
+            WHERE LESSONS_STUDENTS.STUDENT_ID=#{studentId}
+            )
             <if test="page != null">
                 AND ROWNUM &lt; #{page.pageSize,jdbcType=INTEGER}+#{page.first,jdbcType=INTEGER}+1
             </if>
@@ -25,6 +31,12 @@
             FROM MESSAGES
             LEFT JOIN TEACHERS ON TEACHERS.ID=MESSAGES.TEACHER_ID
             <where>
+                MESSAGES.TEACHER_ID IN (
+                SELECT LESSONS.TEACHER_ID
+                FROM LESSONS
+                LEFT JOIN LESSONS_STUDENTS ON LESSONS_STUDENTS.LESSON_ID=LESSONS.LESSON_ID
+                WHERE LESSONS_STUDENTS.STUDENT_ID=#{studentId}
+                )
                 <if test="page != null">
                     AND ROWNUM &lt; #{page.first,jdbcType=INTEGER}+1
                 </if>
@@ -34,6 +46,12 @@
     <select id="countMessages" resultType="int">
         SELECT COUNT(MESSAGE_ID)
         FROM MESSAGES
+        WHERE MESSAGES.TEACHER_ID IN (
+            SELECT LESSONS.TEACHER_ID
+            FROM LESSONS
+            LEFT JOIN LESSONS_STUDENTS ON LESSONS_STUDENTS.LESSON_ID=LESSONS.LESSON_ID
+            WHERE LESSONS_STUDENTS.STUDENT_ID=#{studentId}
+            )
     </select>
     <select id="findMessageById" parameterType="int" resultMap="MessageResult">
         SELECT MESSAGE_ID,TITLE,CREATE_DATE,MESSAGE_CONTENT,TEACHER_NAME
